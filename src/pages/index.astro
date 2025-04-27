@@ -1,5 +1,7 @@
 ---
+import { getCollection } from 'astro:content'
 
+const countries = await getCollection('countries')
 ---
 
 <html lang="en">
@@ -11,6 +13,12 @@
 		<title>Astro</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<h1><a href="/">The Phenomenon</a></h1>
+		{countries?.map((country) => (
+			<div>
+				<a href={`/${country.data.id}`}>{country.data.canonical_name}</a>
+				<span>{country.data.record_count}</span>
+			</div>
+		))}
 	</body>
 </html>

@@ -1,0 +1,37 @@
+---
+import { getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const countries = await getCollection('statesByCountry')
+  return countries.flatMap((country) => {
+    return country.data.states.map((state) => ({ 
+      params: {
+        country: state.country,
+        state: state.id
+      },
+      props: { ...state }
+    }))
+  })
+}
+
+const { id, canonical_name, country, record_count } = Astro.props
+
+
+const test = await getCollection('citiesByState')
+console.log(test[0])
+
+
+const citiesByState = await getEntry('citiesByState', id)
+// console.log(citiesByState?.data.cities)
+---
+<a href="/">The Phenomenon</a>
+<a href={`/${country}`}>Back to Country</a>
+<h1>{canonical_name}</h1>
+<p>{record_count}</p>
+{citiesByState?.data.cities.map((city) => (
+  <div>
+    <a href={`/${country}/${id}/${city.id}`}>{city.canonical_name}</a>
+    <span>{city.record_count}</span>
+  </div>
+))}

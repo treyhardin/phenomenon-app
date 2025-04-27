@@ -1,0 +1,41 @@
+---
+import { getCollection, getEntry } from 'astro:content'
+import { supabase } from '../../lib/supabase'
+
+export async function getStaticPaths() {
+  const countries = await getCollection('countries')
+  return countries?.map((country) => {
+    return { params: { country: country.data.id }, props: { ...country.data } }
+  })
+}
+
+const { id, canonical_name, record_count } = Astro.props
+
+const { data: reports, error } = await supabase
+  .from('Clean Data')
+  .select()
+  .eq('canonical_country', canonical_name)
+  .order('dateOccurred', {ascending: true})
+  .limit(20)
+
+if (error) console.log(error)
+
+const countryStates = await getEntry('statesByCountry', id)
+// console.log(countryStates)
+---
+<a href="/">The Phenomenon</a>
+<h1>{canonical_name}</h1><span>{record_count}</span>
+<h2>States</h2>
+{countryStates?.data.states.map((state) => (
+  <div>
+    <a href={`/${id}/${state.id}`}>{state.canonical_name}</a>
+    <span>{state.record_count}</span>
+  </div>
+))}
+<h2>Latest Reports</h2>
+{reports?.map((report) => (
+  <div>
+    <p>{report.id}</p>
+    <p>{report.dateOccurred}</p>
+  </div>
+))}
