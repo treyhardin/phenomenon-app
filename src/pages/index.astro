@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content'
 import MasterLayout from '../layouts/layoutMaster.astro'
 import LocationChip from '../components/LocationChip.astro'
 import LocationList from '../components/LocationList.astro'
+import LayoutApp from '../layouts/layoutApp.astro'
 
 const countries = await getCollection('countries')
 
@@ -12,12 +13,10 @@ const states = countries.map((country) => ({
 	count: country.data.record_count.toLocaleString()
 }))
 ---
-<MasterLayout
+<LayoutApp
 	title='UAP Database'
 >
-	<div class="location-chips">
-		<LocationList
-			locations={states}
-		/>
-	</div>
-</MasterLayout>
+	<LocationList
+		locations={states}
+	/>
+</LayoutApp>

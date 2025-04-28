@@ -12,6 +12,7 @@
   --space-3xs: 5px;
 
   /* Spacing: Radius */
+  --radius-sm: 5px;
   --radius-rounded: 100vw;
 
   /* Spacing: Layout */

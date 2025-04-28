@@ -1,7 +1,8 @@
 ---
 import { getCollection, getEntry } from 'astro:content'
 import { supabase } from '../../lib/supabase'
-import MasterLayout from '../../layouts/layoutMaster.astro'
+import LayoutApp from '../../layouts/layoutApp.astro'
+import LocationList from '../../components/LocationList.astro'
 
 export async function getStaticPaths() {
   const countries = await getCollection('countries')
@@ -22,25 +23,35 @@ const { data: reports, error } = await supabase
 if (error) console.log(error)
 
 const countryStates = await getEntry('statesByCountry', id)
-// console.log(countryStates)
+console.log(countryStates?.data.states)
+
+
+const states = countryStates?.data.states.map((state) => ({
+	title: state.canonical_name,
+	url: `/${id}/${state.id}`,
+	count: state.record_count.toLocaleString()
+}))
+console.log(states)
 ---
-<MasterLayout
+<LayoutApp
   title={canonical_name}
 >
-  
 <h1>{canonical_name}</h1><span>{record_count}</span>
-<h2>States</h2>
-{countryStates?.data.states.map((state) => (
+<LocationList 
+  title="Statess"
+  locations={states}
+/>
+<!-- {countryStates?.data.states.map((state) => (
   <div>
     <a href={`/${id}/${state.id}`}>{state.canonical_name}</a>
     <span>{state.record_count}</span>
   </div>
-))}
-<h2>Latest Reports</h2>
+))} -->
+<!-- <h2>Latest Reports</h2>
 {reports?.map((report) => (
   <div>
     <p>{report.id}</p>
     <p>{report.dateOccurred}</p>
   </div>
-))}
-</MasterLayout>
+))} -->
+</LayoutApp>

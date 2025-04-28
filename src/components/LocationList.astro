@@ -1,24 +1,34 @@
 ---
 import LocationChip from "./LocationChip.astro"
 
-const { locations } = Astro.props
+const { locations, title } = Astro.props
 console.log(locations)
 ---
 { locations && <div class="location-list">
-  {locations.map((chip) => (
-    <LocationChip 
-      title={chip.title}
-      url={chip.url}
-      count={chip.count}
-    />
-  ))}
+  {title && <h3>{title}</h3>}
+  <div class="locations">
+    {locations.map((chip) => (
+      <LocationChip 
+        title={chip.title}
+        url={chip.url}
+        count={chip.count}
+      />
+    ))}
+  </div>
 </div>}
 
 <style>
+
   .location-list {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+    /* gap: var(--space-3xs); */
+  }
+
+  .locations {
+    display: flex;
+    flex-direction: column;
     gap: var(--space-3xs);
   }
 </style>
