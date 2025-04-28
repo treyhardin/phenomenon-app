@@ -14,6 +14,19 @@ const countries = defineCollection({
   }
 });
 
+const states = defineCollection({
+  loader: async () => {
+
+    let { data: states, error } = await supabase
+      .from('Lookup State')
+      .select('*')
+      .gt('record_count', 0)
+      .order('record_count', { ascending: false })
+
+    return states.map((state) => ({ id: state.id, ...state }))
+  }
+});
+
 const statesByCountry = defineCollection({
   loader: async () => {
 
@@ -38,4 +51,4 @@ const citiesByState = defineCollection({
   }
 });
 
-export const collections = { countries, statesByCountry, citiesByState };
+export const collections = { countries, states, statesByCountry, citiesByState };

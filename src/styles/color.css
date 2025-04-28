@@ -1,0 +1,39 @@
+:root {
+
+  /* Color: Primitives */
+  --black: #0C0C0C;
+  --grey-700: #1C1C1C;
+  --grey-600: #535353;
+  --grey-500: #737373;
+  --grey-400: #737373;
+  --grey-200: #A6A59D;
+  --grey-100: #D1CFBE;
+  --white: #EDECDE;
+  --blue: #426ED4;
+  --green: #16B14C;
+
+  /* Color: Tokens */
+  --color-background: var(--black);
+  --color-background-secondary: var(--grey-700);
+  --color-foreground: var(--white);
+  --color-foreground-secondary: var(--grey-200);
+
+  --color-accent-01: var(--green);
+
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background: var(--white);
+    --color-background-secondary: var(--grey-200);
+    --color-foreground: var(--black);
+    --color-foreground-secondary: var(--grey-700);
+
+    --color-accent-01: var(--blue);
+  }
+}
+
+html {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}

@@ -1,0 +1,24 @@
+---
+import LocationChip from "./LocationChip.astro"
+
+const { locations } = Astro.props
+console.log(locations)
+---
+{ locations && <div class="location-list">
+  {locations.map((chip) => (
+    <LocationChip 
+      title={chip.title}
+      url={chip.url}
+      count={chip.count}
+    />
+  ))}
+</div>}
+
+<style>
+  .location-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+  }
+</style>

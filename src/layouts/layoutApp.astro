@@ -1,0 +1,17 @@
+---
+import LayoutMaster from "./layoutMaster.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props
+---
+<LayoutMaster
+  title={title}
+>
+  <div class="content">
+    <main></main>
+    <aside></aside>
+  </div>
+</LayoutMaster>

@@ -1,6 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content'
 import { supabase } from '../../lib/supabase'
+import MasterLayout from '../../layouts/layoutMaster.astro'
 
 export async function getStaticPaths() {
   const countries = await getCollection('countries')
@@ -23,7 +24,10 @@ if (error) console.log(error)
 const countryStates = await getEntry('statesByCountry', id)
 // console.log(countryStates)
 ---
-<a href="/">The Phenomenon</a>
+<MasterLayout
+  title={canonical_name}
+>
+  
 <h1>{canonical_name}</h1><span>{record_count}</span>
 <h2>States</h2>
 {countryStates?.data.states.map((state) => (
@@ -39,3 +43,4 @@ const countryStates = await getEntry('statesByCountry', id)
     <p>{report.dateOccurred}</p>
   </div>
 ))}
+</MasterLayout>

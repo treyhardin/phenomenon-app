@@ -1,24 +1,23 @@
 ---
 import { getCollection } from 'astro:content'
+import MasterLayout from '../layouts/layoutMaster.astro'
+import LocationChip from '../components/LocationChip.astro'
+import LocationList from '../components/LocationList.astro'
 
 const countries = await getCollection('countries')
----
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1><a href="/">The Phenomenon</a></h1>
-		{countries?.map((country) => (
-			<div>
-				<a href={`/${country.data.id}`}>{country.data.canonical_name}</a>
-				<span>{country.data.record_count}</span>
-			</div>
-		))}
-	</body>
-</html>
+const states = countries.map((country) => ({
+	title: country.data.canonical_name,
+	url: `/${country.data.id}`,
+	count: country.data.record_count.toLocaleString()
+}))
+---
+<MasterLayout
+	title='UAP Database'
+>
+	<div class="location-chips">
+		<LocationList
+			locations={states}
+		/>
+	</div>
+</MasterLayout>

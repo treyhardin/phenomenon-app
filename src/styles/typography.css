@@ -1,0 +1,31 @@
+:root {
+  --font-family-primary: 'PP Supply Sans', sans-serif;
+}
+
+@font-face {
+  font-family: 'PP Supply Sans';
+  src: url('/PPSupplySans-Regular.woff2') format('woff2'),
+      url('/PPSupplySans-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PP Supply Sans';
+  src: url('/PPSupplySans-Ultralight.woff2') format('woff2'),
+      url('/PPSupplySans-Ultralight.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: var(--font-family-primary);
+  font-weight: 200;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-accent-01);
+}

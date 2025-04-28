@@ -1,0 +1,34 @@
+---
+
+interface Props {
+  title: string;
+  url: string;
+  count?: string;
+}
+
+const { title, url, count } = Astro.props
+---
+<a class="location-chip" href={url}>
+  {title}
+  {count && <span class="report-count">{count}</span>}
+</a>
+
+<style>
+  .location-chip {
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-rounded);
+    padding-inline: var(--space-xs);
+    padding-block: 0.1em;
+    margin: 0;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5em;
+    line-height: 1;
+
+    .report-count {
+      color: var(--color-foreground);
+    }
+  }
+</style>
