@@ -1,9 +1,8 @@
 ---
 import { getCollection } from 'astro:content'
-import MasterLayout from '../layouts/layoutMaster.astro'
-import LocationChip from '../components/LocationChip.astro'
 import LocationList from '../components/LocationList.astro'
 import LayoutApp from '../layouts/layoutApp.astro'
+import { supabase } from '../lib/supabase'
 
 const countries = await getCollection('countries')
 
@@ -12,11 +11,20 @@ const states = countries.map((country) => ({
 	url: `/${country.data.id}`,
 	count: country.data.record_count.toLocaleString()
 }))
+
+const { data: reports, error } = await supabase
+  .from('Clean Data')
+  .select()
+  .not('dateOccurred', 'is', null)
+  .order('dateOccurred', {ascending: false})
+  .limit(20)
 ---
 <LayoutApp
 	title='UAP Database'
+	reports={reports}
 >
 	<LocationList
+		categoryTitle="Country"
 		locations={states}
 	/>
 </LayoutApp>

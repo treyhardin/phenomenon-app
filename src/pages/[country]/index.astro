@@ -17,41 +17,33 @@ const { data: reports, error } = await supabase
   .from('Clean Data')
   .select()
   .eq('canonical_country', canonical_name)
-  .order('dateOccurred', {ascending: true})
+  .not('dateOccurred', 'is', null)
+  .order('dateOccurred', {ascending: false})
   .limit(20)
 
 if (error) console.log(error)
 
 const countryStates = await getEntry('statesByCountry', id)
-console.log(countryStates?.data.states)
-
 
 const states = countryStates?.data.states.map((state) => ({
 	title: state.canonical_name,
 	url: `/${id}/${state.id}`,
-	count: state.record_count.toLocaleString()
+	count: state.record_count
 }))
-console.log(states)
 ---
 <LayoutApp
   title={canonical_name}
+  reports={reports}
 >
-<h1>{canonical_name}</h1><span>{record_count}</span>
-<LocationList 
-  title="Statess"
+<LocationList
+  breadcrumbs={[
+    {
+      label: "All Countries",
+      url: "/"
+    }
+  ]}
+  categoryTitle={canonical_name}
+  categoryCount={record_count}
   locations={states}
 />
-<!-- {countryStates?.data.states.map((state) => (
-  <div>
-    <a href={`/${id}/${state.id}`}>{state.canonical_name}</a>
-    <span>{state.record_count}</span>
-  </div>
-))} -->
-<!-- <h2>Latest Reports</h2>
-{reports?.map((report) => (
-  <div>
-    <p>{report.id}</p>
-    <p>{report.dateOccurred}</p>
-  </div>
-))} -->
 </LayoutApp>

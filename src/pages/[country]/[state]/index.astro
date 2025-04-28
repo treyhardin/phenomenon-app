@@ -1,7 +1,9 @@
 ---
 import { getEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
-import MasterLayout from '../../../layouts/layoutMaster.astro';
+import LayoutApp from '../../../layouts/layoutApp.astro';
+import { supabase } from '../../../lib/supabase';
+import LocationList from '../../../components/LocationList.astro';
 
 export async function getStaticPaths() {
   const countries = await getCollection('statesByCountry')
@@ -18,26 +20,39 @@ export async function getStaticPaths() {
 
 const { id, canonical_name, country, record_count } = Astro.props
 
-
-const test = await getCollection('citiesByState')
-console.log(test[0])
-
-
 const citiesByState = await getEntry('citiesByState', id)
 const countryData = await getEntry('countries', country)
-console.log(countryData)
-// console.log(citiesByState?.data.cities)
+
+// console.log(countryData?.data)
+
+const cities = citiesByState?.data.cities.map((city) => ({
+	title: city.canonical_name,
+	url: `/${countryData?.data.id}/${id}/${city.id}`,
+	count: city.record_count
+}))
+
+const { data: reports, error } = await supabase
+  .from('Clean Data')
+  .select()
+  .eq('canonical_state', canonical_name)
+  .not('dateOccurred', 'is', null)
+  .order('dateOccurred', {ascending: false})
+  .limit(20)
+
 ---
-<MasterLayout
+<LayoutApp
   title={`${canonical_name}, ${countryData?.data.canonical_name}`}
+  reports={reports}
 >
-  <a href={`/${country}`}>{countryData?.data.canonical_name}</a>
-  <h1>{canonical_name}</h1>
-  <p>{record_count}</p>
-  {citiesByState?.data.cities.map((city) => (
-    <div>
-      <a href={`/${country}/${id}/${city.id}`}>{city.canonical_name}</a>
-      <span>{city.record_count}</span>
-    </div>
-  ))}
-</MasterLayout>
+  <LocationList
+    breadcrumbs={[
+      {
+        label: countryData?.data.canonical_name,
+        url: `/${countryData?.data.id}`
+      }
+    ]}
+    categoryTitle={canonical_name}
+    categoryCount={record_count}
+    locations={cities}
+  />
+</LayoutApp>

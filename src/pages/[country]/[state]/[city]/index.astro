@@ -3,6 +3,8 @@ import { getCollection, getEntry } from 'astro:content';
 import { supabase } from '../../../../lib/supabase';
 import ReportCard from '../../../../components/ReportCard.astro';
 import MasterLayout from '../../../../layouts/layoutMaster.astro';
+import LayoutApp from '../../../../layouts/layoutApp.astro';
+import LocationList from '../../../../components/LocationList.astro';
 
 export async function getStaticPaths() {
   const states = await getCollection('citiesByState')
@@ -31,15 +33,25 @@ let { data: reports, error } = await supabase
       .order('country', { ascending: false })
 
 ---
-<MasterLayout
+<LayoutApp
   title={`${canonical_name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
+  reports={reports}
 >
-  
-  <a href="/">The Phenomenon</a>
-  <a href={`/${country}`}>Back to Country</a>
-  <h1>{canonical_name}</h1>
-  <p>{record_count}</p>
-  {reports?.map((report) => (
+  <LocationList
+    breadcrumbs={[
+      {
+        label: countryData?.data.canonical_name,
+        url: `/${countryData?.data.id}`
+      },
+      {
+        label: stateData?.data.canonical_name,
+        url: `/${countryData?.data.id}/${stateData?.data.id}`
+      }
+    ]}
+    categoryTitle={canonical_name}
+    categoryCount={record_count}
+  />
+  <!-- {reports?.map((report) => (
     <ReportCard 
       id={report.id}
       date={report.dateOccurred}
@@ -49,5 +61,5 @@ let { data: reports, error } = await supabase
       country={report.canonical_country}
       shape={report.shape}
     />
-  ))}
-</MasterLayout>
+  ))} -->
+</LayoutApp>

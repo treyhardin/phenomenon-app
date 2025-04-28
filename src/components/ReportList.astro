@@ -1,0 +1,39 @@
+---
+import ReportCard from './ReportCard.astro';
+
+interface Props {
+    reports?: ReportCard[] | null;
+}
+
+const { reports } = Astro.props
+---
+{reports &&
+    <div class="report-list">
+        <h2>Latest UAP Reports</h2>
+        <div class="reports">
+            {reports.map((report) => (
+                <ReportCard
+                    id={report.id}
+                    summary={report.summary}
+                    city={report.city}
+                    state={report.state}
+                    country={report.country}
+                    shape={report.shape}
+                    dateOccurred={report.dateOccurred}
+                    dateReported={report.dateReported}
+                    content={report.content}
+                    media={report.media}
+                />
+            ))}
+        </div>
+    </div>
+}
+
+<style>
+    .report-list {
+        overflow-y: auto;
+        max-height: 100%;
+        padding-inline: var(--page-margin);
+        padding-block: var(--space-md);
+    }
+</style>

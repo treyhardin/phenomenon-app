@@ -1,26 +1,53 @@
 ---
 import { formatDate } from "../lib/utils"
 
-interface Props {
-  id: string;
-  date?: Date;
-  city: string;
-  state: string;
-  country: string;
-  summary: string;
-  content?: string;
-  shape?: string;
-}
+// interface Props extends ReportCard;
 
-const { id, date, city, state, country, summary, shape } = Astro.props
-const formattedDate = formatDate(date)
+const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape } = Astro.props
+const formattedDate = formatDate(dateOccurred)
+// const formattedDate = dateOccurred
 ---
 <div class="report-card">
-  { id && <p>{id}</p>}
-  { summary && <p>{summary}</p>}
-  { city && <p>{city}</p>}
-  { state && <p>{state}</p>}
-  { country && <p>{country}</p>}
-  { shape && <p>{shape}</p>}
-  { date && formattedDate && <p>{formattedDate}</p>}
+  { summary && <p class="h3">{summary}</p>}
+  <!-- {dateOccurred} -->
+  { dateOccurred && formattedDate && <p>{formattedDate}</p>}
+  <div class="details">
+
+    { id && <span>{id}</span>}
+    <div class="location">
+      { (canonical_city || city) &&  <span>{canonical_city ? canonical_city : city}</span>}
+      { (canonical_state || state) && <span>, {canonical_state ? canonical_state : state}</span>}
+      { (canonical_country || country) && <span>, {canonical_country ? canonical_country : country}</span>}
+    </div>
+    { shape && <span>{shape}</span>}
+  </div>
 </div>
+
+<dialog id={`details_${id}`}>
+  <p>Greetings, one and all!</p>
+  <form method="dialog">
+    <button>OK</button>
+  </form>
+</dialog>
+
+
+
+
+<style>
+  .report-card {
+    border-bottom: 1px solid var(--color-background);
+    padding-block: var(--space-md);
+
+    .details {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .location {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+</style>
