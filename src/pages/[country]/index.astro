@@ -24,17 +24,18 @@ const { data: reports, error } = await supabase
 if (error) console.log(error)
 
 const countryStates = await getEntry('statesByCountry', id)
-const recordData = await getEntry('recordsByCountry', id)
+// const recordData = await getEntry('recordsByCountry', id)
 
 const states = countryStates?.data.states.map((state) => ({
 	title: state.canonical_name,
 	url: `/${id}/${state.id}`,
 	count: state.record_count
 }))
+
 ---
 <LayoutApp
   title={canonical_name}
-  reports={recordData?.data.records.slice(0, 30)}
+  reports={reports}
 >
 <LocationList
   breadcrumbs={[
