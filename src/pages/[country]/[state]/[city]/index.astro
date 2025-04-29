@@ -23,19 +23,13 @@ export async function getStaticPaths() {
 const { id, canonical_name, record_count } = Astro.props
 const { country, state } = Astro.params
 
-const stateData = await getEntry('states', state)
 const countryData = await getEntry('countries', country)
-
-let { data: reports, error } = await supabase
-      .from('Clean Data')
-      .select('*')
-      .eq('canonical_city', canonical_name)
-      .order('country', { ascending: false })
-
+const stateData = await getEntry('states', state)
+let recordData = await getEntry('recordsByCity', id)
 ---
 <LayoutApp
   title={`${canonical_name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
-  reports={reports}
+  reports={recordData?.data.records}
 >
   <LocationList
     breadcrumbs={[

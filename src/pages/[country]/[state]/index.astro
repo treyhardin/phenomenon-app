@@ -2,7 +2,6 @@
 import { getEntry } from 'astro:content';
 import { getCollection } from 'astro:content';
 import LayoutApp from '../../../layouts/layoutApp.astro';
-import { supabase } from '../../../lib/supabase';
 import LocationList from '../../../components/LocationList.astro';
 
 export async function getStaticPaths() {
@@ -22,8 +21,7 @@ const { id, canonical_name, country, record_count } = Astro.props
 
 const citiesByState = await getEntry('citiesByState', id)
 const countryData = await getEntry('countries', country)
-
-// console.log(countryData?.data)
+const recordData = await getEntry('recordsByState', id)
 
 const cities = citiesByState?.data.cities.map((city) => ({
 	title: city.canonical_name,
@@ -31,18 +29,10 @@ const cities = citiesByState?.data.cities.map((city) => ({
 	count: city.record_count
 }))
 
-const { data: reports, error } = await supabase
-  .from('Clean Data')
-  .select()
-  .eq('canonical_state', canonical_name)
-  .not('dateOccurred', 'is', null)
-  .order('dateOccurred', {ascending: false})
-  .limit(20)
-
 ---
 <LayoutApp
   title={`${canonical_name}, ${countryData?.data.canonical_name}`}
-  reports={reports}
+  reports={recordData?.data.records.slice(0, 30)}
 >
   <LocationList
     breadcrumbs={[

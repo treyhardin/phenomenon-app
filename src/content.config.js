@@ -51,4 +51,48 @@ const citiesByState = defineCollection({
   }
 });
 
-export const collections = { countries, states, statesByCountry, citiesByState };
+const recordsByCountry = defineCollection({
+  loader: async () => {
+
+    let { data: countries, error } = await supabase
+      .from('records_by_country')
+      .select('*')
+      .order('canonical_country', { ascending: false })
+
+    return countries.map((country) => ({ id: country.canonical_country, ...country }))
+  }
+});
+
+const recordsByState = defineCollection({
+  loader: async () => {
+
+    let { data: states, error } = await supabase
+      .from('records_by_state')
+      .select('*')
+      .order('canonical_state', { ascending: false })
+
+    return states.map((state) => ({ id: state.canonical_state, ...state }))
+  }
+});
+
+const recordsByCity = defineCollection({
+  loader: async () => {
+
+    let { data: cities, error } = await supabase
+      .from('records_by_city')
+      .select('*')
+      .order('canonical_city', { ascending: false })
+
+    return cities.map((city) => ({ id: city.canonical_city, ...city }))
+  }
+});
+
+export const collections = { 
+  countries, 
+  states, 
+  statesByCountry, 
+  citiesByState,
+  recordsByCountry,
+  recordsByState,
+  recordsByCity 
+};

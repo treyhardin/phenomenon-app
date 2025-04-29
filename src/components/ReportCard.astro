@@ -3,7 +3,7 @@ import { formatDate } from "../lib/utils"
 
 // interface Props extends ReportCard;
 
-const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape } = Astro.props
+const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content } = Astro.props
 const formattedDate = formatDate(dateOccurred)
 // const formattedDate = dateOccurred
 ---
@@ -20,15 +20,19 @@ const formattedDate = formatDate(dateOccurred)
       { (canonical_country || country) && <span>, {canonical_country ? canonical_country : country}</span>}
     </div>
     { shape && <span>{shape}</span>}
+    {content && <button popovertarget={`details_${id}`}>View Details</button>}
   </div>
 </div>
 
-<dialog id={`details_${id}`}>
-  <p>Greetings, one and all!</p>
-  <form method="dialog">
-    <button>OK</button>
-  </form>
-</dialog>
+{content &&
+  <dialog popover id={`details_${id}`} class="detail-modal">
+    {/* <p>{content}</p> */}
+    <Fragment set:html={content} />
+    {/* <form method="dialog"> */}
+    <button popovertarget={`details_${id}`}>Close</button>
+    {/* </form> */}
+  </dialog>
+}
 
 
 
@@ -49,5 +53,13 @@ const formattedDate = formatDate(dateOccurred)
       display: flex;
       flex-direction: row;
     }
+  }
+
+  .detail-modal {
+    width: calc(100% - var(--page-margin) * 2);
+    max-width: 30rem;
+    border-radius: var(--radius-sm);
+    padding-inline: var(--space-sm);
+    padding-block: var(--space-lg);
   }
 </style>
