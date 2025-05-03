@@ -19,14 +19,14 @@ const { locations, categoryTitle, categoryCount, breadcrumbs } = Astro.props
   { breadcrumbs &&
     <div class="breadcrumbs">
       { breadcrumbs?.map((breadcrumb, i) => (
-        <a href={breadcrumb.url}>{(i != 0) && <span>&#8725;&nbsp;</span> }{breadcrumb.label}&nbsp;</a>
+        <a class="utility-small" href={breadcrumb.url}>{(i != 0) && <span>&#8725;&nbsp;</span> }{breadcrumb.label}&nbsp;</a>
       ))}
     </div>
   }
   {categoryTitle && 
     <div class="category-title">
       <h1 class="title utility">{categoryTitle}</h1>
-      {categoryCount && <span class="category-count">{categoryCount.toLocaleString()}</span>}
+      {categoryCount && <span class="category-count utility-small">{categoryCount.toLocaleString()}</span>}
     </div>
   }
   <div class="locations">
@@ -58,7 +58,7 @@ const { locations, categoryTitle, categoryCount, breadcrumbs } = Astro.props
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      gap: var(--space-2xs);
+      gap: var(--space-3xs);
       
       .title {
         margin-block: 0.4em 0;

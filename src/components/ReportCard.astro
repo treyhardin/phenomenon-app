@@ -8,9 +8,9 @@ const formattedDate = formatDate(dateOccurred)
 // const formattedDate = dateOccurred
 ---
 <div class="report-card">
-  { summary && <p class="h3">{summary}</p>}
-  <!-- {dateOccurred} -->
   { dateOccurred && formattedDate && <p>{formattedDate}</p>}
+  { summary && <p class="h6">{summary}</p>}
+  <!-- {dateOccurred} -->
   <div class="details">
 
     { id && <span>{id}</span>}
@@ -39,12 +39,13 @@ const formattedDate = formatDate(dateOccurred)
 
 <style>
   .report-card {
-    border-bottom: 1px solid var(--color-background);
+    border-bottom: 1px solid var(--color-neutral);
     padding-block: var(--space-md);
 
     .details {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
       align-items: center;
       gap: var(--space-xs);
     }

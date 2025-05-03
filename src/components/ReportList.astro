@@ -9,7 +9,7 @@ const { reports } = Astro.props
 ---
 {reports &&
     <div class="report-list">
-        <h2 class="utility">Latest UAP Reports</h2>
+        <h2 class="utility-small">Latest UAP Reports</h2>
         <div class="reports">
             {reports.map((report) => (
                 <ReportCard
@@ -31,9 +31,12 @@ const { reports } = Astro.props
 
 <style>
     .report-list {
+        background-color: var(--color-background-secondary);
+        border-radius: var(--radius-sm);
         overflow-y: auto;
         max-height: 100%;
         padding-inline: var(--page-margin);
-        padding-block: var(--space-md);
+        padding-block: var(--space-xs);
+        max-width: 40rem;
     }
 </style>

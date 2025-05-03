@@ -72,10 +72,27 @@ h6,
   margin: 0 0 0.6em;
 }
 
+h6,
+.h6 {
+  font-family: var(--font-family-secondary);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .utility {
   font-family: var(--font-family-secondary);
   text-transform: uppercase;
   font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+}
+
+.utility-small {
+  font-family: var(--font-family-primary);
+  text-transform: uppercase;
+  font-size: 9px;
   letter-spacing: 0.1em;
   font-weight: 400;
 }
