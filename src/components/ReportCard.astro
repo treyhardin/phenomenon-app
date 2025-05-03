@@ -26,6 +26,7 @@ const formattedDate = formatDate(dateOccurred)
 
 {content &&
   <dialog popover id={`details_${id}`} class="detail-modal">
+    { id && <span class="utility">{id}</span>}
     {/* <p>{content}</p> */}
     <Fragment set:html={content} />
     {/* <form method="dialog"> */}
@@ -61,6 +62,21 @@ const formattedDate = formatDate(dateOccurred)
     max-width: 30rem;
     border-radius: var(--radius-sm);
     padding-inline: var(--space-sm);
-    padding-block: var(--space-lg);
+    padding-block: var(--space-sm);
+    flex-direction: column;
+    gap: var(--space-sm);
+    border: none;
+
+    &:popover-open {
+      display: flex;
+    }
+    /* display: flex;
+    flex-direction: column;
+    align-items: stretch; */
+
+    button {
+      display: block;
+      width: 100%;
+    }
   }
 </style>
