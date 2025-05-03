@@ -1,35 +1,41 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import { supabase } from '../../../../lib/supabase';
-import ReportCard from '../../../../components/ReportCard.astro';
-import MasterLayout from '../../../../layouts/layoutMaster.astro';
 import LayoutApp from '../../../../layouts/layoutApp.astro';
 import LocationList from '../../../../components/LocationList.astro';
 
 export async function getStaticPaths() {
-  const states = await getCollection('citiesByState')
-  return states.flatMap((state) => {
-    return state.data.cities.map((city) => ({ 
+  const cities = await getCollection('cities')
+  const paths = cities.map((city) => ({
       params: {
-        country: city.country,
-        state: state.id,
+        country: city.data.country,
+        state: city.data.state,
         city: city.id
       },
-      props: { ...city }
-    }))
-  })
+      props: {
+        recordCount: city.data.record_count,
+        name: city.data.canonical_name
+      }
+    })
+  )
+  return paths.filter(Boolean) // Remove any null entries
 }
-
-const { id, canonical_name, record_count } = Astro.props
-const { country, state } = Astro.params
+const { country, state, city } = Astro.params
+const { recordCount, name } = Astro.props
 
 const countryData = await getEntry('countries', country)
 const stateData = await getEntry('states', state)
-let recordData = await getEntry('recordsByCity', id)
+
+let { data: reports, error } = await supabase
+  .from('records_by_city')
+  .select('records')
+  .eq('canonical_city', city)
+  .limit(1)
+  .single()
 ---
 <LayoutApp
-  title={`${canonical_name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
-  reports={recordData?.data.records}
+  title={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
+  reports={reports?.records}
 >
   <LocationList
     breadcrumbs={[
@@ -42,18 +48,7 @@ let recordData = await getEntry('recordsByCity', id)
         url: `/${countryData?.data.id}/${stateData?.data.id}`
       }
     ]}
-    categoryTitle={canonical_name}
-    categoryCount={record_count}
+    categoryTitle={name}
+    categoryCount={recordCount}
   />
-  <!-- {reports?.map((report) => (
-    <ReportCard 
-      id={report.id}
-      date={report.dateOccurred}
-      summary={report.summary}
-      city={report.canonical_city}
-      state={report.canonical_state}
-      country={report.canonical_country}
-      shape={report.shape}
-    />
-  ))} -->
 </LayoutApp>

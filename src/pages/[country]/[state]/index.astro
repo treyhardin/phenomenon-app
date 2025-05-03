@@ -6,52 +6,71 @@ import LocationList from '../../../components/LocationList.astro';
 import { supabase } from '../../../lib/supabase';
 
 export async function getStaticPaths() {
-  const countries = await getCollection('statesByCountry')
-  return countries.flatMap((country) => {
-    return country.data.states.map((state) => ({ 
-      params: {
-        country: state.country,
-        state: state.id
-      },
-      props: { ...state }
-    }))
-  })
+  const states = await getCollection('states')
+  const paths = await Promise.all(
+    states.map(async (state) => {
+      let { data: cities, error } = await supabase
+        .from('Lookup City')
+        .select('*')
+        .eq('state', state.id)
+        .order('record_count', { ascending: false })
+      // console.log(state)
+      return {
+        params: {
+          country: state.data.country,
+          state: state.id
+        },
+        props: {
+          stateName: state.data.canonical_name,
+          recordCount: state.data.record_count,
+          cities: cities
+        }
+      }
+    })
+  )
+  return paths.filter(Boolean) // Remove any null entries
 }
 
-const { id, canonical_name, country, record_count } = Astro.props
-
-const citiesByState = await getEntry('citiesByState', id)
+const { stateName, recordCount, cities } = Astro.props
+const { country, state } = Astro.params
+// console.log(cities)
 const countryData = await getEntry('countries', country)
-// const recordData = await getEntry('recordsByState', id)
+// const citiesByState = await getEntry('citiesByState', state)
 
-const cities = citiesByState?.data.cities.map((city) => ({
+const cityLinks = cities?.map((city) => ({
 	title: city.canonical_name,
-	url: `/${countryData?.data.id}/${id}/${city.id}`,
+	url: `/${countryData?.data.id}/${state}/${city.id}`,
 	count: city.record_count
 }))
 
-const { data: reports, error } = await supabase
-  .from('Clean Data')
-  .select()
-  .eq('canonical_state', id)
-  .not('dateOccurred', 'is', null)
-  .order('dateOccurred', {ascending: false})
-  .limit(20)
+// let { data: reports, error } = await supabase
+//   .from('records_by_state')
+//   .select('records')
+//   .eq('canonical_state', state)
+//   .limit(1)
+//   .single()
 
+let { data: reports, error } = await supabase
+  .from('Clean Data')
+  .select('*')
+  .eq('canonical_state', state)
+  .limit(100)
+
+// console.log(reports)
 ---
 <LayoutApp
-  title={`${canonical_name}, ${countryData?.data.canonical_name}`}
+  title={`${stateName}, ${countryData?.data.canonical_name}`}
   reports={reports}
 >
   <LocationList
     breadcrumbs={[
       {
         label: countryData?.data.canonical_name,
-        url: `/${countryData?.data.id}`
+        url: `/${country}`
       }
     ]}
-    categoryTitle={canonical_name}
-    categoryCount={record_count}
-    locations={cities}
+    categoryTitle={stateName}
+    categoryCount={recordCount}
+    locations={cityLinks}
   />
 </LayoutApp>
