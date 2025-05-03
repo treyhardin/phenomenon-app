@@ -53,22 +53,10 @@ const getReports = async () => {
 
 const cities = await getCities()
 const reports = await getReports()
-
-
-// let { data: reports, error } = await supabase
-//   .from('records_by_state')
-//   .select('records')
-//   .eq('canonical_state', state)
-//   .limit(1)
-//   .single()
-
-
-
-// console.log(reports)
 ---
 <LayoutApp
   title={`${stateName}, ${countryData?.data.canonical_name}`}
-  reports={reports}
+  reports={reports?.slice(0, 100)}
 >
   <LocationList
     breadcrumbs={[
