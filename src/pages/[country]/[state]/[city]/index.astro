@@ -26,16 +26,30 @@ const { recordCount, name } = Astro.props
 const countryData = await getEntry('countries', country)
 const stateData = await getEntry('states', state)
 
-let { data: reports, error } = await supabase
-  .from('records_by_city')
-  .select('records')
-  .eq('canonical_city', city)
-  .limit(1)
-  .single()
+const getReports = async () => {
+
+  // console.log(`Fetching reports for ${state}...`)
+  let { data: reports, error } = await supabase
+    .from('clean_data_mv')
+    .select('*')
+    .eq('canonical_city', city)
+    .limit(100)
+
+  return reports
+}
+
+const reports = await getReports()
+
+// let { data: reports, error } = await supabase
+//   .from('records_by_city')
+//   .select('records')
+//   .eq('canonical_city', city)
+//   .limit(1)
+//   .single()
 ---
 <LayoutApp
   title={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
-  reports={reports?.records}
+  reports={reports}
 >
   <LocationList
     breadcrumbs={[
