@@ -27,7 +27,6 @@ const formattedDate = formatDate(dateOccurred)
 {content &&
   <dialog popover id={`details_${id}`} class="detail-modal">
     { id && <span class="utility">{id}</span>}
-    {/* <p>{content}</p> */}
     <Fragment set:html={content} />
     {/* <form method="dialog"> */}
     <button popovertarget={`details_${id}`}>Close</button>
