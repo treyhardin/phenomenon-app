@@ -45,7 +45,9 @@ const getReports = async () => {
     .from('clean_data_mv')
     .select('*')
     .eq('canonical_state', state)
-    .limit(100)
+    .not('dateOccurred', 'is', null)
+    .order('dateOccurred', {ascending: false})
+    // .limit(100)
   return reports
 }
 

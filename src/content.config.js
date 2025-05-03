@@ -32,14 +32,14 @@ const states = defineCollection({
 const cities = defineCollection({
   loader: async () => {
 
-    let { data: states, error } = await supabase
+    let { data: cities, error } = await supabase
       .from('Lookup City')
       .select('*')
-      .gt('record_count', 0)
+      // .gt('record_count', 0)
       .order('record_count', { ascending: false })
 
     if (error) console.log(error)
-    return states.map((state) => ({ id: state.id, ...state }))
+    return cities.map((city) => ({ id: city.id, ...city }))
   }
 });
 

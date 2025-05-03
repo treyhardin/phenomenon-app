@@ -6,6 +6,7 @@ import LocationList from '../../../../components/LocationList.astro';
 
 export async function getStaticPaths() {
   const cities = await getCollection('cities')
+  console.log(cities)
   const paths = cities.map((city) => ({
       params: {
         country: city.data.country,
@@ -33,7 +34,9 @@ const getReports = async () => {
     .from('clean_data_mv')
     .select('*')
     .eq('canonical_city', city)
-    .limit(100)
+    .not('dateOccurred', 'is', null)
+    .order('dateOccurred', {ascending: false})
+    // .limit(100)
 
   return reports
 }
