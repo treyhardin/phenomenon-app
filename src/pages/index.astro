@@ -4,20 +4,27 @@ import LocationList from '../components/LocationList.astro'
 import LayoutApp from '../layouts/layoutApp.astro'
 import { supabase } from '../lib/supabase'
 
-const countries = await getCollection('countries')
+const getCountries = async () => {
+	const countries = await getCollection('countries')
+	return countries.map((country) => ({
+		title: country.data.canonical_name,
+		url: `/${country.data.id}`,
+		count: country.data.record_count.toLocaleString()
+	}))
+}
 
-const states = countries.map((country) => ({
-	title: country.data.canonical_name,
-	url: `/${country.data.id}`,
-	count: country.data.record_count.toLocaleString()
-}))
+const getReports = async () => {
+	const { data: reports, error } = await supabase
+		.from('clean_data_mv')
+		.select()
+		.not('dateOccurred', 'is', null)
+		.order('dateOccurred', {ascending: false})
+		.limit(30)
+	return reports
+}
 
-const { data: reports, error } = await supabase
-  .from('Clean Data')
-  .select()
-  .not('dateOccurred', 'is', null)
-  .order('dateOccurred', {ascending: false})
-  .limit(20)
+const reports = await getReports()
+const countries = await getCountries()
 ---
 <LayoutApp
 	title='UAP Database'
@@ -25,6 +32,6 @@ const { data: reports, error } = await supabase
 >
 	<LocationList
 		categoryTitle="Country"
-		locations={states}
+		locations={countries}
 	/>
 </LayoutApp>

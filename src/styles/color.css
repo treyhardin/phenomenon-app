@@ -17,6 +17,7 @@
   --color-background-secondary: var(--grey-700);
   --color-foreground: var(--white);
   --color-foreground-secondary: var(--grey-200);
+  --color-neutral: var(--grey-400);
 
   --color-accent-01: var(--green);
 

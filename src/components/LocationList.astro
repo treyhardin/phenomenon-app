@@ -25,7 +25,7 @@ const { locations, categoryTitle, categoryCount, breadcrumbs } = Astro.props
   }
   {categoryTitle && 
     <div class="category-title">
-      <h1 class="title">{categoryTitle}</h1>
+      <h1 class="title utility">{categoryTitle}</h1>
       {categoryCount && <span class="category-count">{categoryCount.toLocaleString()}</span>}
     </div>
   }
@@ -47,6 +47,7 @@ const { locations, categoryTitle, categoryCount, breadcrumbs } = Astro.props
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-3xs);
+    position: relative;
 
     .breadcrumbs {
       display: flex;

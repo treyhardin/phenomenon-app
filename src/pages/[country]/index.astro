@@ -7,30 +7,48 @@ import LocationList from '../../components/LocationList.astro'
 export async function getStaticPaths() {
   const countries = await getCollection('countries')
   return countries?.map((country) => {
-    return { params: { country: country.data.id }, props: { ...country.data } }
+    return { 
+      params: { 
+        country: country.data.id 
+      }, 
+      props: { 
+        ...country.data 
+      } 
+    }
   })
 }
 
 const { id, canonical_name, record_count } = Astro.props
+const { country } = Astro.params
 
-const { data: reports, error } = await supabase
-  .from('Clean Data')
-  .select()
-  .eq('canonical_country', id)
-  .not('dateOccurred', 'is', null)
-  .order('dateOccurred', {ascending: false})
-  .limit(20)
+const getStates = async () => {
+  
+  let { data: states, error } = await supabase
+    .from('Lookup State')
+    .select('*')
+    .eq('country', country)
+    .order('record_count', { ascending: false })
 
-if (error) console.log(error)
+  return states?.map((state) => ({
+    title: state.canonical_name,
+    url: `/${country}/${state.id}`,
+    count: state.record_count
+  }))
+}
 
-const countryStates = await getEntry('statesByCountry', id)
-// const recordData = await getEntry('recordsByCountry', id)
+const getReports = async () => {
+  const { data: reports, error } = await supabase
+    .from('Clean Data')
+    .select()
+    .eq('canonical_country', id)
+    .not('dateOccurred', 'is', null)
+    .order('dateOccurred', {ascending: false})
+    .limit(20)
+  return reports
+}
 
-const states = countryStates?.data.states.map((state) => ({
-	title: state.canonical_name,
-	url: `/${id}/${state.id}`,
-	count: state.record_count
-}))
+const states = await getStates()
+const reports = await getReports()
 
 ---
 <LayoutApp

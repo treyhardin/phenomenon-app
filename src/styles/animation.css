@@ -1,0 +1,12 @@
+:root {
+
+  --anim-easing: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --anim-duration-sm: 0.2s;
+  --anim-duration-md: 0.6s;
+  --anim-duration-lg: 1.2s;
+  
+  --anim-sm: var(--anim-duration-sm) var(--anim-easing);
+  --anim-md: var(--anim-duration-md) var(--anim-easing);
+  --anim-lg: var(--anim-duration-lg) var(--anim-easing);
+}

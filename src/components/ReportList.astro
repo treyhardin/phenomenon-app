@@ -9,7 +9,7 @@ const { reports } = Astro.props
 ---
 {reports &&
     <div class="report-list">
-        <h2>Latest UAP Reports</h2>
+        <h2 class="utility">Latest UAP Reports</h2>
         <div class="reports">
             {reports.map((report) => (
                 <ReportCard
