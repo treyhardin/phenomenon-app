@@ -1,10 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
-import LocationList from '../components/LocationList.astro'
 import LayoutApp from '../layouts/layoutApp.astro'
 import { supabase } from '../lib/supabase'
-import LayoutAppNew from '../layouts/layoutAppNew.astro'
-import Sidebar from '../components/Sidebar.astro'
 import Map from '../components/Map.astro'
 import MapNavigation from '../components/MapNavigation.astro'
 
@@ -23,14 +20,14 @@ const getReports = async () => {
 		.select()
 		.not('dateOccurred', 'is', null)
 		.order('dateOccurred', {ascending: false})
-		.limit(30)
+		.limit(60)
 	return reports
 }
 
 const reports = await getReports()
 const countries = await getCountries()
 ---
-<LayoutAppNew
+<LayoutApp
 	title='UAP Database'
   reports={reports}
   activePath="map"
@@ -43,4 +40,4 @@ const countries = await getCountries()
   <Map 
     slot="main"
   />
-</LayoutAppNew>
+</LayoutApp>

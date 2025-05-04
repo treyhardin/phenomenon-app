@@ -1,28 +1,31 @@
 ---
 import ReportList from "../components/ReportList.astro";
+import Sidebar from "../components/Sidebar.astro";
 import LayoutMaster from "./layoutMaster.astro";
+import Map from "../components/Map.astro"
 
 interface Props {
   title: string;
   reports?: ReportCard[] | null;
+  activePath: string;
 }
 
-const { title, reports } = Astro.props
+const { title, reports, activePath } = Astro.props
 // console.log(reports)
 ---
 <LayoutMaster
   title={title}
 >
   <div class="content">
-    <aside>
-      <slot />
-    </aside>
-    <main>
-      <ReportList 
-        reports={reports}
-      />
-      <!-- <slot /> -->
-    </main>
+    <Sidebar 
+      reports={reports}
+      activePath={activePath}
+    >
+      <slot name="sidebar" />
+    </Sidebar>
+    <slot name="main" />
+    <!-- <Map 
+    /> -->
   </div>
 </LayoutMaster>
 
@@ -34,7 +37,10 @@ const { title, reports } = Astro.props
     justify-content: stretch;
     align-items: stretch;
     flex: 0 1 100%;
-    min-height: 0;
+    min-height: 100%;
+    position: relative;
+    overflow: clip;
+    width: 100%;
   }
 
   main {

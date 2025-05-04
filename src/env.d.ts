@@ -14,3 +14,14 @@ interface ReportCard {
     content?: string;
     media?: string[];
 }
+
+interface Breadcrumb {
+    label: string;
+    url: string;
+}
+
+interface LocationLink {
+    title: string;
+    url: string;
+    count?: number;
+}

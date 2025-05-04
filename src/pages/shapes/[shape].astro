@@ -1,11 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import LayoutAppNew from '../../layouts/layoutAppNew.astro';
+import LayoutApp from '../../layouts/layoutApp.astro';
 import { getEntry } from 'astro:content';
 import ShapesList from '../../components/ShapesList.astro';
 import { supabase } from '../../lib/supabase';
-import ReportList from '../../components/ReportList.astro';
-import { record } from 'astro:schema';
 import ShapeReports from '../../components/ShapeReports.astro';
 
 export async function getStaticPaths() {
@@ -41,7 +39,7 @@ const getRecords = async () => {
 
 const records = await getRecords()
 ---
-<LayoutAppNew
+<LayoutApp
   title={`UAP Shapes | ${shapeData?.data.name}`}
   activePath='shapes'
 >
@@ -53,4 +51,4 @@ const records = await getRecords()
     slot="main"
     reports={records}
   />
-</LayoutAppNew>
+</LayoutApp>

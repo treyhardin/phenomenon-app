@@ -4,6 +4,15 @@ import Pin from '../icons/pin.svg'
 import Close from '../icons/close.svg'
 import ArrowBack from '../icons/arrow-back.svg'
 
+interface Props {
+  activeLocation?: string;
+  activePath?: string;
+  reports: ReportCard[] | null;
+  locations: LocationLink[] | undefined;
+  breadcrumbs?: Breadcrumb[];
+  menuTitle?: string;
+}
+
 const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle } = Astro.props
 // console.log(countries)
 ---

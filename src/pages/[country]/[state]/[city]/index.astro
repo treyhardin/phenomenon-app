@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import { supabase } from '../../../../lib/supabase';
-import LayoutAppNew from '../../../../layouts/layoutAppNew.astro';
+import LayoutApp from '../../../../layouts/layoutApp.astro';
 import MapNavigation from '../../../../components/MapNavigation.astro';
 import Map from '../../../../components/Map.astro';
 import { getCities } from '../../../../lib/db-queries';
@@ -43,12 +43,12 @@ const getReports = async () => {
   return reports
 }
 
-const reports = await getReports()
-const otherCities = await getCities(countryData?.data.id, stateData?.data.id)
+const reports: ReportCard[] | null = await getReports()
+const otherCities: LocationLink[] | undefined = await getCities(countryData?.data.id, stateData?.data.id)
 ---
-<LayoutAppNew
+<LayoutApp
   title={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
-  reports={reports}
+  reports={reports?.slice(0, 100)}
   activePath="map"
 >
   <MapNavigation 
@@ -72,4 +72,4 @@ const otherCities = await getCities(countryData?.data.id, stateData?.data.id)
   <Map 
     slot="main"
   />
-</LayoutAppNew>
+</LayoutApp>

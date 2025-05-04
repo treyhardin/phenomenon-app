@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content"
-import LayoutAppNew from "../../layouts/layoutAppNew.astro"
+import LayoutApp from "../../layouts/layoutApp.astro"
 import ShapesList from "../../components/ShapesList.astro"
 import ReportList from "../../components/ReportList.astro"
 import { supabase } from "../../lib/supabase"
@@ -19,7 +19,7 @@ const getReports = async () => {
 
 const reports = await getReports()
 ---
-<LayoutAppNew 
+<LayoutApp 
   title="UAP Shapes"
   activePath="shapes"
 >
@@ -28,5 +28,5 @@ const reports = await getReports()
     slot="main"
     reports={reports}
   />
-</LayoutAppNew>
+</LayoutApp>
 

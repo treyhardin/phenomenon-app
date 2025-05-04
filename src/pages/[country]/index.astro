@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content'
 import { supabase } from '../../lib/supabase'
-import LayoutAppNew from '../../layouts/layoutAppNew.astro'
+import LayoutApp from '../../layouts/layoutApp.astro'
 import MapNavigation from '../../components/MapNavigation.astro'
 import Map from '../../components/Map.astro'
 
@@ -51,7 +51,7 @@ const states = await getStates()
 const reports = await getReports()
 
 ---
-<LayoutAppNew
+<LayoutApp
   title={canonical_name}
   reports={reports?.slice(0, 100)}
   activePath="map"
@@ -72,4 +72,4 @@ const reports = await getReports()
   <Map 
     slot="main"
   />
-</LayoutAppNew>
+</LayoutApp>
