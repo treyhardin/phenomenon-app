@@ -2,9 +2,8 @@
 
   /* Color: Primitives */
   --black: #0C0C0C;
-  --grey-700: #1C1C1C;
-  --grey-600: #535353;
-  --grey-500: #737373;
+  --grey-800: #1C1C1C;
+  --grey-600: #2a2a2a;
   --grey-400: #737373;
   --grey-200: #A6A59D;
   --grey-100: #D1CFBE;
@@ -14,12 +13,16 @@
 
   /* Color: Tokens */
   --color-background: var(--black);
-  --color-background-secondary: var(--grey-700);
+  --color-background-secondary: var(--grey-800);
+  --color-background-tertiary: var(--grey-600);
   --color-foreground: var(--white);
-  --color-foreground-secondary: var(--grey-200);
-  --color-neutral: var(--grey-400);
+  --color-foreground-secondary: var(--grey-400);
+  --color-neutral: var(--grey-600);
 
   --color-accent-01: var(--green);
+
+  --background-blur-color: color-mix(in srgb, var(--color-background) 40%, transparent);
+  --background-blur: blur(10px);
 
 }
 
@@ -28,7 +31,7 @@
     --color-background: var(--white);
     --color-background-secondary: var(--grey-200);
     --color-foreground: var(--black);
-    --color-foreground-secondary: var(--grey-700);
+    --color-foreground-secondary: var(--grey-800);
 
     --color-accent-01: var(--blue);
   }
@@ -37,4 +40,15 @@
 html {
   background-color: var(--color-background);
   color: var(--color-foreground);
+
+  [data-color-scheme="inverse"] {
+    --color-background: var(--white);
+    --color-background-secondary: var(--grey-200);
+    --color-foreground: var(--black);
+    --color-foreground-secondary: var(--grey-800);
+
+    --color-accent-01: var(--blue);
+
+    color: var(--color-foreground);
+  }
 }

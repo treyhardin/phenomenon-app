@@ -7,7 +7,7 @@ input {
 }
 
 input[type="search"] {
-    background-color: var(--color-background-secondary);
+    background-color: var(--color-background-tertiary);
     color: var(--color-foreground);
     font: inherit;
     width: auto;
@@ -16,9 +16,9 @@ input[type="search"] {
     padding: var(--input-padding);
 }
 
-input::placeholder {
+/* input::placeholder {
     color: var(--color-neutral);
-}
+} */
 
 button {
     border: none;
@@ -31,4 +31,10 @@ button {
     &:hover {
         background-color: var(--color-accent-01);
     }
+}
+
+button[data-style="secondary"] {
+    background-color: transparent;
+    color: var(--color-foreground);
+    border: 1px solid var(--color-neutral);
 }

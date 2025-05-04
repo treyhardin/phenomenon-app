@@ -17,5 +17,8 @@
 
   /* Spacing: Layout */
   --page-margin: var(--space-xs);
+
+  --icon-sm: 12px;
+  --icon-lg: 24px;
 }
 

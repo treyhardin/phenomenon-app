@@ -1,8 +1,10 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import { supabase } from '../../../../lib/supabase';
-import LayoutApp from '../../../../layouts/layoutApp.astro';
-import LocationList from '../../../../components/LocationList.astro';
+import LayoutAppNew from '../../../../layouts/layoutAppNew.astro';
+import MapNavigation from '../../../../components/MapNavigation.astro';
+import Map from '../../../../components/Map.astro';
+import { getCities } from '../../../../lib/db-queries';
 
 export async function getStaticPaths() {
   const cities = await getCollection('cities')
@@ -42,30 +44,32 @@ const getReports = async () => {
 }
 
 const reports = await getReports()
-
-// let { data: reports, error } = await supabase
-//   .from('records_by_city')
-//   .select('records')
-//   .eq('canonical_city', city)
-//   .limit(1)
-//   .single()
+const otherCities = await getCities(countryData?.data.id, stateData?.data.id)
 ---
-<LayoutApp
+<LayoutAppNew
   title={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
   reports={reports}
+  activePath="map"
 >
-  <LocationList
+  <MapNavigation 
+    slot="sidebar"
+    activeLocation={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
+    activePath={`/${country}/${state}/${city}`}
+    reports={reports}
     breadcrumbs={[
+      {
+        label: 'All Countries',
+        url: `/`
+      },
       {
         label: countryData?.data.canonical_name,
         url: `/${countryData?.data.id}`
-      },
-      {
-        label: stateData?.data.canonical_name,
-        url: `/${countryData?.data.id}/${stateData?.data.id}`
       }
     ]}
-    categoryTitle={name}
-    categoryCount={recordCount}
+    menuTitle={stateData?.data.canonical_name}
+    locations={otherCities}
   />
-</LayoutApp>
+  <Map 
+    slot="main"
+  />
+</LayoutAppNew>

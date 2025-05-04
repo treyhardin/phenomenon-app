@@ -1,0 +1,180 @@
+---
+import ReportList from "./ReportList.astro"
+import Pin from '../icons/pin.svg'
+import Close from '../icons/close.svg'
+import ArrowBack from '../icons/arrow-back.svg'
+
+const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle } = Astro.props
+// console.log(countries)
+---
+<div class="map-navigation">
+  <button 
+    data-style="secondary" 
+    class="location-toggle"
+    popovertarget="location-menu"
+  >
+    <span class="button-icon"><Pin /></span>
+    {activeLocation ? activeLocation : "All Locations"}
+  </button>
+  <ReportList 
+    reports={reports}
+  />
+</div>
+
+<dialog popover id="location-menu" class="location-menu">
+
+  <div class="menu">
+    <div class="menu-title">
+      {breadcrumbs && 
+        <div class="breadcrumbs">
+          {breadcrumbs.map((link, i) => (
+            <a href={link.url} class="breadcrumb utility-small">
+              {breadcrumbs.length <= 1 && <span class="back-icon"><ArrowBack /></span>}
+              {link.label}{i < breadcrumbs.length - 1 && <span>/&nbsp;</span>}
+            </a>
+          ))}
+        </div>
+      }
+      <h2 class="locations-title utility">{menuTitle ? menuTitle : "Reports by Country"}</h2>
+    </div>
+    <div class="locations-list">
+      {locations?.map((location) => (
+        <a class="location-link" href={location.url} data-active={activePath === location.url ? "true" : "false"}>
+          <span class="utility">{location.title}</span>
+          <span class="record-count">{location.count}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+  <button popovertarget="location-menu" class="close-button">
+    <Close />
+  </button>
+</dialog>
+
+<style>
+  .map-navigation {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: var(--space-sm);
+
+    .location-toggle {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      gap: var(--space-3xs);
+    }
+
+    .button-icon {
+      width: var(--icon-sm);
+      height: auto;
+    }
+  }
+
+  .location-menu {
+    background-color: transparent;
+    border: none;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    color: var(--color-foreground);
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+    padding-block: var(--space-lg);
+    gap: var(--space-md);
+    position: relative;
+
+    .menu {
+      /* align-self: stretch; */
+      width: min(100%, 30rem);
+      display: flex;
+      flex-direction: column;
+      /* gap: var(--space-xs); */
+
+      .menu-title {
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-2xs);
+        padding-block: var(--space-xs);
+        border-bottom: 1px solid var(--color-foreground);
+
+        .locations-title {
+          /* color: var(--color-foreground-secondary); */
+        }
+
+        .breadcrumbs {
+          display: flex;
+          flex-direction: row;
+        }
+
+        .breadcrumb {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: var(--space-3xs);
+          white-space: nowrap;
+
+          .back-icon {
+            flex: 0 0 var(--icon-sm);
+            height: auto;
+          }
+        }
+      }
+    }
+
+
+
+    
+    .locations-list {
+      display: flex;
+      flex-direction: column;
+      /* flex: 0 0 min(100%, 30rem); */
+
+      .location-link {
+        padding-block: var(--space-xs);
+        /* color: var(--color-foreground-secondary); */
+        border-bottom: 1px solid var(--color-background-tertiary);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        transition: padding var(--anim-sm), background-color var(--anim-sm);
+
+        &:hover,
+        &[data-active="true"] {
+          background-color: var(--color-foreground);
+          color: var(--color-background);
+          border-radius: var(--radius-sm);
+          padding-inline: var(--space-xs);
+        }
+      }
+    }
+
+    .close-button {
+      position: fixed;
+      top: var(--page-margin);
+      right: var(--page-margin);
+      background-color: transparent;
+      padding: 0;
+      margin: 0;
+      border-radius: 0;
+      color: inherit;
+      width: var(--icon-lg);
+      height: auto;
+    }
+    /* max-width: 40rem; */
+
+    &:popover-open {
+      display: flex;
+    }
+
+    &::backdrop {
+      background-color: var(--background-blur-color);
+      backdrop-filter: var(--background-blur);
+    }
+  }
+</style>

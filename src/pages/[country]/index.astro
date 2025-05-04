@@ -1,8 +1,9 @@
 ---
 import { getCollection, getEntry } from 'astro:content'
 import { supabase } from '../../lib/supabase'
-import LayoutApp from '../../layouts/layoutApp.astro'
-import LocationList from '../../components/LocationList.astro'
+import LayoutAppNew from '../../layouts/layoutAppNew.astro'
+import MapNavigation from '../../components/MapNavigation.astro'
+import Map from '../../components/Map.astro'
 
 export async function getStaticPaths() {
   const countries = await getCollection('countries')
@@ -50,19 +51,25 @@ const states = await getStates()
 const reports = await getReports()
 
 ---
-<LayoutApp
+<LayoutAppNew
   title={canonical_name}
   reports={reports?.slice(0, 100)}
+  activePath="map"
 >
-<LocationList
-  breadcrumbs={[
-    {
-      label: "All Countries",
-      url: "/"
-    }
-  ]}
-  categoryTitle={canonical_name}
-  categoryCount={record_count}
-  locations={states}
-/>
-</LayoutApp>
+  <MapNavigation 
+    slot="sidebar"
+    activeLocation={canonical_name}
+    reports={reports}
+    locations={states}
+    breadcrumbs={[
+      {
+        label: "All Countries",
+        url: "/"
+      }
+    ]}
+    menuTitle={`${canonical_name}`}
+  />
+  <Map 
+    slot="main"
+  />
+</LayoutAppNew>

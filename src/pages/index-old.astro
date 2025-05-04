@@ -3,10 +3,6 @@ import { getCollection } from 'astro:content'
 import LocationList from '../components/LocationList.astro'
 import LayoutApp from '../layouts/layoutApp.astro'
 import { supabase } from '../lib/supabase'
-import LayoutAppNew from '../layouts/layoutAppNew.astro'
-import Sidebar from '../components/Sidebar.astro'
-import Map from '../components/Map.astro'
-import MapNavigation from '../components/MapNavigation.astro'
 
 const getCountries = async () => {
 	const countries = await getCollection('countries')
@@ -30,17 +26,12 @@ const getReports = async () => {
 const reports = await getReports()
 const countries = await getCountries()
 ---
-<LayoutAppNew
+<LayoutApp
 	title='UAP Database'
-  reports={reports}
-  activePath="map"
+	reports={reports}
 >
-  <MapNavigation 
-    slot="sidebar"
-    reports={reports}
-    locations={countries}
-  />
-  <Map 
-    slot="main"
-  />
-</LayoutAppNew>
+	<LocationList
+		categoryTitle="Country"
+		locations={countries}
+	/>
+</LayoutApp>

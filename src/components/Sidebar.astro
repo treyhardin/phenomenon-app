@@ -1,0 +1,40 @@
+---
+import HeaderNew from "./HeaderNew.astro";
+
+const { activePath } = Astro.props
+---
+<div class="sidebar">
+  <HeaderNew 
+    activePath={activePath}
+  />
+  <div class="content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .sidebar {
+    background-color: var(--background-blur-color);
+    margin: var(--page-margin);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-sm) 0;
+    z-index: 1;
+    backdrop-filter: var(--background-blur);
+    /* min-width: 20rem; */
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    min-width: 0;
+    flex: 0 0 min(calc(100% - var(--page-margin) * 2), 28rem);
+
+    .content {
+      flex: 0 1 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+      min-height: 0;
+      /* overflow-y: auto; */
+      /* background-color: red; */
+    }
+  }
+</style>

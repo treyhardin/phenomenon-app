@@ -4,6 +4,10 @@ import { getCollection } from 'astro:content';
 import LayoutApp from '../../../layouts/layoutApp.astro';
 import LocationList from '../../../components/LocationList.astro';
 import { supabase } from '../../../lib/supabase';
+import LayoutAppNew from '../../../layouts/layoutAppNew.astro';
+import MapNavigation from '../../../components/MapNavigation.astro';
+import Map from '../../../components/Map.astro';
+import { getCities } from '../../../lib/db-queries';
 
 export async function getStaticPaths() {
   const states = await getCollection('states')
@@ -26,19 +30,19 @@ const { country, state } = Astro.params
 
 const countryData = await getEntry('countries', country)
 
-const getCities = async () => {
-  let { data: cities, error } = await supabase
-    .from('Lookup City')
-    .select('*')
-    .eq('state', state)
-    .order('record_count', { ascending: false })
+// const getCities = async () => {
+//   let { data: cities, error } = await supabase
+//     .from('Lookup City')
+//     .select('*')
+//     .eq('state', state)
+//     .order('record_count', { ascending: false })
 
-  return cities?.map((city) => ({
-    title: city.canonical_name,
-    url: `/${countryData?.data.id}/${state}/${city.id}`,
-    count: city.record_count
-  }))
-}
+//   return cities?.map((city) => ({
+//     title: city.canonical_name,
+//     url: `/${countryData?.data.id}/${state}/${city.id}`,
+//     count: city.record_count
+//   }))
+// }
 
 const getReports = async () => {
   let { data: reports, error } = await supabase
@@ -51,14 +55,35 @@ const getReports = async () => {
   return reports
 }
 
-const cities = await getCities()
+const cities = await getCities(countryData?.data.id, state)
 const reports = await getReports()
 ---
-<LayoutApp
+<LayoutAppNew
   title={`${stateName}, ${countryData?.data.canonical_name}`}
   reports={reports?.slice(0, 100)}
+  activePath="map"
 >
-  <LocationList
+  <MapNavigation 
+    slot="sidebar"
+    activeLocation={`${stateName}, ${countryData?.data.canonical_name}`}
+    reports={reports}
+    locations={cities}
+    breadcrumbs={[
+      {
+        label: 'All Countries',
+        url: `/`
+      },
+      {
+        label: countryData?.data.canonical_name,
+        url: `/${country}`
+      }
+    ]}
+    menuTitle={stateName}
+  />
+  <Map 
+    slot="main"
+  />
+  <!-- <LocationList
     breadcrumbs={[
       {
         label: countryData?.data.canonical_name,
@@ -68,5 +93,5 @@ const reports = await getReports()
     categoryTitle={stateName}
     categoryCount={recordCount}
     locations={cities}
-  />
-</LayoutApp>
+  /> -->
+</LayoutAppNew>

@@ -43,9 +43,23 @@ const cities = defineCollection({
   }
 });
 
+const shapes = defineCollection({
+  loader: async () => {
+
+    let { data: shapes, error } = await supabase
+      .from('Lookup Shape')
+      .select('*')
+      .order('record_count', { ascending: false })
+
+    if (error) console.log(error)
+    return shapes.map((shape) => ({ id: shape.id, ...shape }))
+  }
+});
+
 
 export const collections = { 
   countries, 
   states,
-  cities
+  cities,
+  shapes
 };

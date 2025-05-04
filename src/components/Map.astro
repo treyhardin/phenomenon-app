@@ -1,0 +1,33 @@
+---
+---
+<main class="map" id="map">
+  
+</main>
+
+<script>
+  import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+
+  mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
+
+  const loadMap = () => {
+     const map = new mapboxgl.Map({
+      container: 'map', // container ID
+      style: 'mapbox://styles/trumancreative/cm6ihkvlu006h01rychf1hm9g', // style URL
+      center: [-74.5, 40], // starting position [lng, lat]
+      zoom: 4, // starting zoom
+    });
+  }
+
+  document.addEventListener("astro:page-load", (event) => {
+    loadMap()
+  });
+
+</script>
+
+<style>
+  .map {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+</style>

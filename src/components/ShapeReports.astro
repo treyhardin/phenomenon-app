@@ -1,0 +1,21 @@
+---
+import ReportList from "./ReportList.astro";
+const { reports } = Astro.props
+---
+<div class="reports">
+  <ReportList 
+    reports={reports}
+  />
+</div>
+
+<style>
+  .reports {
+    margin-block: var(--page-margin);
+    margin-inline: var(--page-margin);
+    padding: 0 var(--space-sm);
+    flex: 0 1 100%;
+    background-color: var(--color-background-secondary);
+    /* padding: var(--page-margin); */
+    /* background-color: red; */
+  }
+</style>

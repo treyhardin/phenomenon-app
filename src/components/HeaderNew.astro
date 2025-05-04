@@ -1,0 +1,101 @@
+---
+import Globe from '../icons/globe.svg'
+import Pin from '../icons/pin.svg'
+import Shape from '../icons/shape.svg'
+
+const { activePath } = Astro.props
+---
+<header>
+  <a href="/" class="logo utility">The Phenomenon</a>
+  <div class="search-bar">
+    <input 
+      type="search" 
+      placeholder="Search"
+    />
+  </div>
+  <nav>
+    <a 
+      href="/" 
+      class="nav-link utility-small" 
+      data-active={activePath === "map" ? "true" : "false"}
+    >
+      <span class="nav-icon"><Globe /></span>
+      Map
+    </a>
+    <a 
+      href="/shapes/" 
+      class="nav-link utility-small" 
+      data-active={activePath === "shapes" ? "true" : "false"}
+    >
+      <span class="nav-icon"><Shape /></span>
+      Shape
+    </a>
+  </nav>
+</header>
+
+<style>
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2xs);
+    /* border-bottom: 1px solid var(--color-neutral); */
+    padding-bottom: var(--space-xs);
+
+    .logo {
+      text-align: center;
+      padding-block: var(--space-2xs);
+    }
+
+    nav {
+      display: flex;
+      flex-direction: row;
+      justify-content: stretch;
+      align-self: stretch;
+      border: 1px solid var(--color-neutral);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      flex: 0 0 auto;
+
+      .nav-link {
+        flex: 0 1 100%;
+        /* text-align: center; */
+        padding: var(--space-3xs);
+        transition: background-color var(--anim-sm);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3xs);
+
+        &[data-active="true"] {
+          background-color: var(--color-foreground);
+          color: var(--color-background);
+        }
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--color-neutral);
+        }
+
+        &:hover {
+          background-color: var(--color-accent-01);
+          color: inherit;
+        }
+
+      }
+
+      .nav-icon {
+        flex: 0 0 var(--icon-sm);
+        height: auto;
+      }
+    }
+
+    .search-bar {
+      align-self: stretch;
+
+      input[type="search"] {
+        width: 100%;
+      }
+    }
+  }
+</style>
