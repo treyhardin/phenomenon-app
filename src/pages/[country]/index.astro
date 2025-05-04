@@ -44,6 +44,7 @@ const getReports = async () => {
     .eq('canonical_country', id)
     .not('dateOccurred', 'is', null)
     .order('dateOccurred', {ascending: false})
+    .limit(100)
   return reports
 }
 
@@ -53,7 +54,7 @@ const reports = await getReports()
 ---
 <LayoutApp
   title={canonical_name}
-  reports={reports?.slice(0, 100)}
+  reports={reports}
   activePath="map"
 >
   <MapNavigation 
