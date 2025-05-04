@@ -32,6 +32,7 @@ const getRecords = async () => {
     .or(`shape.eq.${shapeData?.id},shape.eq.${shapeData?.data.name}`)
     .not('dateOccurred', 'is', null)
     .order('dateOccurred', {ascending: false})
+    .limit(100)
     // .order('dateOccurred', { ascending: false })
 
   return records
