@@ -19,7 +19,7 @@ export async function getStaticPaths() {
   })
 }
 
-const { id, canonical_name, record_count } = Astro.props
+const { id, canonical_name, record_count, longitude, latitude } = Astro.props
 const { country } = Astro.params
 
 const getStates = async () => {
@@ -50,7 +50,6 @@ const getReports = async () => {
 
 const states = await getStates()
 const reports = await getReports()
-
 ---
 <LayoutApp
   title={canonical_name}
@@ -72,5 +71,7 @@ const reports = await getReports()
   />
   <Map 
     slot="main"
+    longitude={longitude}
+    latitude={latitude}
   />
 </LayoutApp>

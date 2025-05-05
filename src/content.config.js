@@ -35,7 +35,7 @@ const cities = defineCollection({
     let { data: cities, error } = await supabase
       .from('Lookup City')
       .select('*')
-      // .gt('record_count', 0)
+      .gt('record_count', 0)
       .order('record_count', { ascending: false })
 
     if (error) console.log(error)
