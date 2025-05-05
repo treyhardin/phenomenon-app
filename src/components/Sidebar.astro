@@ -14,18 +14,18 @@ const { activePath } = Astro.props
 
 <style>
   .sidebar {
-    background-color: var(--background-blur-color);
+    /* background-color: var(--background-blur-color); */
+    /* backdrop-filter: var(--background-blur); */
+    /* border-radius: var(--radius-sm); */
     margin: var(--page-margin);
-    border-radius: var(--radius-sm);
-    padding: var(--space-xs) var(--space-sm) 0;
     z-index: 1;
-    backdrop-filter: var(--background-blur);
     /* min-width: 20rem; */
     display: flex;
     flex-direction: column;
     justify-content: stretch;
+    gap: var(--space-2xs);
     min-width: 0;
-    flex: 0 0 min(calc(100% - var(--page-margin) * 2), 26rem);
+    flex: 0 0 min(calc(100% - var(--page-margin) * 2), 20rem);
 
     .content {
       flex: 0 1 100%;
@@ -33,6 +33,10 @@ const { activePath } = Astro.props
       flex-direction: column;
       justify-content: stretch;
       min-height: 0;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-sm);
+      background-color: var(--background-blur-color);
+      backdrop-filter: var(--background-blur);
       /* overflow-y: auto; */
       /* background-color: red; */
     }

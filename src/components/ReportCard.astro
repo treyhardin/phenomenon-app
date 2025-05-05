@@ -8,20 +8,22 @@ const formattedDate = formatDate(dateOccurred)
 // const formattedDate = dateOccurred
 ---
 <div class="report-card">
-  { dateOccurred && formattedDate && <p>{formattedDate}</p>}
+  <div class="info">
+    { dateOccurred && formattedDate && <p>{formattedDate}</p>}
+    { id && <span>{id}</span>}
+  </div>
   { summary && <p class="h6">{summary}</p>}
   <!-- {dateOccurred} -->
   <div class="details">
 
-    { id && <span>{id}</span>}
     <div class="location">
       { (canonical_city || city) &&  <span>{canonical_city ? canonical_city : city}</span>}
       { (canonical_state || state) && <span>, {canonical_state ? canonical_state : state}</span>}
       { (canonical_country || country) && <span>, {canonical_country ? canonical_country : country}</span>}
     </div>
     { shape && <span>{shape}</span>}
-    {content && <button popovertarget={`details_${id}`}>View Details</button>}
   </div>
+  {content && <button data-style="secondary" popovertarget={`details_${id}`}>View Details</button>}
 </div>
 
 {content &&
@@ -39,7 +41,22 @@ const formattedDate = formatDate(dateOccurred)
 <style>
   .report-card {
     border-bottom: 1px solid var(--color-neutral);
-    padding-block: var(--space-md);
+    padding-block: var(--space-xs);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2xs);
+
+    & p {
+      margin: 0;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      color: var(--color-foreground-secondary);
+    }
 
     .details {
       display: flex;

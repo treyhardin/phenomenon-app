@@ -40,7 +40,11 @@ const { activePath } = Astro.props
     align-items: center;
     gap: var(--space-2xs);
     /* border-bottom: 1px solid var(--color-neutral); */
-    padding-bottom: var(--space-xs);
+    /* padding-bottom: var(--space-xs); */
+    background-color: var(--background-blur-color);
+    backdrop-filter: var(--background-blur);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
 
     .logo {
       text-align: center;

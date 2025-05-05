@@ -65,7 +65,7 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
     display: flex;
     flex-direction: column;
     min-height: 0;
-    gap: var(--space-sm);
+    gap: var(--space-2xs);
 
     .location-toggle {
       display: flex;
@@ -94,6 +94,8 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
     padding-block: var(--space-lg);
     gap: var(--space-md);
     position: relative;
+    /* opacity: 0; */
+    transition: display var(--anim-lg) allow-discrete, opacity var(--anim-lg);
 
     .menu {
       /* align-self: stretch; */
@@ -134,9 +136,6 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
         }
       }
     }
-
-
-
     
     .locations-list {
       display: flex;
@@ -176,14 +175,37 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
       height: auto;
     }
     /* max-width: 40rem; */
+  }
 
-    &:popover-open {
+  .location-menu::backdrop {
+    background-color: var(--background-blur-color);
+    backdrop-filter: var(--background-blur);
+    opacity: 0;
+    display: block;
+    transition: display var(--anim-lg) allow-discrete, opcaity var(--anim-lg);
+  }
+
+  .location-menu:popover-open {
+    display: flex;
+    opacity: 1;
+
+    &::backdrop {
+      /* background-color: var(--background-blur-color); */
+      opacity: 1;
+    }
+  }
+
+  @starting-style {
+
+    .location-menu:popover-open {
+      opacity: 0;
       display: flex;
     }
 
-    &::backdrop {
-      background-color: var(--background-blur-color);
-      backdrop-filter: var(--background-blur);
+    .location-menu:popover-open::backdrop {
+      /* background-color: transparent; */
+      opacity: 0;
     }
   }
+  
 </style>

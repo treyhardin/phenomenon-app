@@ -63,7 +63,21 @@ const cityPins = {
       const el = document.createElement('div');
       el.className = 'marker';
 
-      new mapboxgl.Marker(el).setLngLat(feature.geometry.coordinates).addTo(map);
+      const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }) // add popups
+            // .setHTML(
+            //   `<h3>${feature.properties.title}</h3>
+            //   <p>${feature.properties.description}</p>`
+            // )
+
+      popup.on('open', () => {
+          console.log('popup was opened');
+      });
+
+      new mapboxgl.Marker(el)
+        .setLngLat(feature.geometry.coordinates)
+        .setPopup(popup)
+        .addTo(map);
+      
       // new mapboxgl.Marker().setLngLat(feature.geometry.coordinates).addTo(map);  // Replace this line with code from step 7-2
     }
   }
@@ -82,10 +96,11 @@ const cityPins = {
 
     .marker {
       /* background-image: url('https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png'); */
+      --pin-size: 2px;
       background-color: var(--white);
       background-size: cover;
-      width: 5px;
-      height: 5px;
+      width: var(--pin-size);
+      height: var(--pin-size);
       border-radius: 50%;
       cursor: pointer;
     }
