@@ -28,6 +28,8 @@ const cityPins = {
   data-latitude={latitude ? latitude : null}
   data-zoom={zoom ? zoom : null}
   data-pins={JSON.stringify(cityPins)}
+  data-is-loaded="false"
+  transition:persist
 >
 </main>
 
@@ -80,11 +82,14 @@ const cityPins = {
       
       // new mapboxgl.Marker().setLngLat(feature.geometry.coordinates).addTo(map);  // Replace this line with code from step 7-2
     }
+    // mapElement?.dataset.isloaded = "true"
   }
 
-  document.addEventListener("astro:page-load", (event) => {
-    loadMap()
-  });
+  // document.addEventListener("astro:page-load", (event) => {
+  //   loadMap()
+  // });
+
+  loadMap()
 
 </script>
 
