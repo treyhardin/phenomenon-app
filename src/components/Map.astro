@@ -6,6 +6,8 @@ const { longitude, latitude, zoom } = Astro.props
 
 const cities = await getCollection('cities')
 
+// console.log(cities)
+
 const cityPins = {
   type: 'FeatureCollection',
   features: cities.filter((city) => city.data.latitude && city.data.longitude).map((city) => ({
@@ -15,8 +17,9 @@ const cityPins = {
       coordinates: [city.data.longitude, city.data.latitude]
     },
     properties: {
-      title: 'Mapbox',
-      description: city.data.canonical_name
+      title: city.data.canonical_name,
+      recordCount: city.data.record_count,
+      url: `/${city.data.country}/${city.data.state}/${city.id}`
     }
   }))
 }
@@ -24,52 +27,82 @@ const cityPins = {
 <main 
   class="map" 
   id="map"
-  data-longitude={longitude ? longitude : null}
-  data-latitude={latitude ? latitude : null}
-  data-zoom={zoom ? zoom : null}
   data-pins={JSON.stringify(cityPins)}
   data-is-loaded="false"
+  data-color-scheme="inverse"
   transition:persist
 >
 </main>
+<div 
+  id="map-data"
+  data-longitude={longitude ? longitude : null}
+  data-latitude={latitude ? latitude : null}
+  data-zoom={zoom ? zoom : null}
+></div>
 
 <script>
-  import mapboxgl, { LngLat } from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+  import mapboxgl, { LngLat, Map } from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
 
   const DEFAULT_COORDS = new LngLat(-95.712891, 37.090240)
   const DEFAULT_ZOOM = 2.5
 
+  let map: Map
+  let longitude: string | undefined
+  let latitude: string | undefined
+  let zoom: string | undefined
+
   mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
+
+  const updateMapData = () => {
+    const mapData = document.getElementById("map-data")
+    longitude = mapData?.dataset.longitude
+    latitude = mapData?.dataset.latitude
+    zoom = mapData?.dataset.zoom
+  }
 
   const loadMap = () => {
 
+    console.log("Load MAP!!!")
+
+
     const mapElement = document.getElementById("map")
-    const longitude = mapElement?.dataset.longitude
-    const latitude = mapElement?.dataset.latitude
-    const zoom = mapElement?.dataset.zoom
     const pins = mapElement?.dataset.pins
     const geojson = pins ? JSON.parse(mapElement?.dataset.pins) : null
 
     // console.log(pins)
     console.log(geojson)
 
-    const map = new mapboxgl.Map({
+    map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/trumancreative/cm6ihkvlu006h01rychf1hm9g', // style URL
       center: longitude && latitude ? new LngLat(parseFloat(longitude), parseFloat(latitude)) : DEFAULT_COORDS, // starting position [lng, lat]
       zoom: zoom ? parseFloat(zoom) : DEFAULT_ZOOM, // starting zoom
     });
 
+    const checkIsInView = (pin) => {
+      if (!map) return false
+      return map.getBounds()?.contains(pin.getLatLng())
+    }
+
     for (const feature of geojson.features) {
 
       const el = document.createElement('div');
       el.className = 'marker';
+      el.style.setProperty("--record-count", feature.properties.recordCount)
 
       const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }) // add popups
-            // .setHTML(
-            //   `<h3>${feature.properties.title}</h3>
-            //   <p>${feature.properties.description}</p>`
-            // )
+      .setHTML(
+        `<h3 class="utility">${feature.properties.title}</h3>
+        <p class="utility-small">${feature.properties.recordCount} ${feature.properties.recordCount > 1 ? "Reports" : "Report"}</p>
+        <a href=${feature.properties.url}>View Details</a>
+        `
+      )
+
+
+      // map.on('move', () => {
+      //   console.log(checkIsInView(feature.geometry.coordinates))
+      //   // console.log('Map is moving');
+      // });
 
       popup.on('open', () => {
           console.log('popup was opened');
@@ -85,9 +118,20 @@ const cityPins = {
     // mapElement?.dataset.isloaded = "true"
   }
 
-  // document.addEventListener("astro:page-load", (event) => {
-  //   loadMap()
-  // });
+  document.addEventListener("astro:page-load", (event) => {
+    // loadMap()
+    updateMapData()
+    let targetCoords = DEFAULT_COORDS
+    let targetZoom = DEFAULT_ZOOM
+
+    if (latitude && longitude) targetCoords = new LngLat(parseFloat(longitude), parseFloat(latitude))
+    if (zoom) targetZoom = parseFloat(zoom)
+
+    if (map) {
+      map.panTo(targetCoords)
+      map.zoomTo(targetZoom)
+    }
+  });
 
   loadMap()
 
@@ -100,14 +144,50 @@ const cityPins = {
     z-index: 0;
 
     .marker {
-      /* background-image: url('https://docs.mapbox.com/help/demos/custom-markers-gl-js/mapbox-icon.png'); */
-      --pin-size: 2px;
+      --record-count: 1; /* To be overwritten per pin */
+
+      /* Settings */
+      --pin-size-min: 2px;
+      --pin-size-max: 4px;
+      --pin-size-threshold: 50;
+
+      /* Size Calculation */
+      --pin-size-range: calc(var(--pin-size-max) - var(--pin-size-min));
+      --pin-scale: min(calc(var(--record-count) / var(--pin-size-threshold)), 1);
+      --pin-size: calc( var(--pin-scale) * var(--pin-size-range) + var(--pin-size-min));
+
       background-color: var(--white);
       background-size: cover;
       width: var(--pin-size);
       height: var(--pin-size);
       border-radius: 50%;
       cursor: pointer;
+      transition: width var(--anim-sm), height var(--anim-sm), background-color var(--anim-sm);
     }
+
+    .marker:hover {
+      /* scale: 1.1; */
+      --hover-size: 10px;
+      width: var(--hover-size);
+      height: var(--hover-size);
+      background-color: var(--color-accent-01);
+    }
+
+
+    .mapboxgl-map {
+      font: inherit !important;
+    }
+
+    .mapboxgl-popup-content {
+      border-radius: var(--radius-sm);
+      color: var(--color-foreground);
+      /* font: inherit; */
+    }
+  }
+</style>
+
+<style is:global>
+  .mapboxgl-map {
+    font: inherit !important;
   }
 </style>
