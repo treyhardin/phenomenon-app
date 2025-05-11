@@ -30,7 +30,7 @@
 @media (prefers-color-scheme: light) {
   :root {
 
-  --background-blur-color: color-mix(in srgb, var(--color-background) 50%, transparent);
+    --background-blur-color: color-mix(in srgb, var(--color-background) 50%, transparent);
     --color-background: var(--white);
     --color-background-secondary: var(--grey-100);
     --color-background-tertiary: var(--grey-200);
@@ -47,6 +47,8 @@ html {
   color: var(--color-foreground);
 
   [data-color-scheme="inverse"] {
+
+    --background-blur-color: color-mix(in srgb, var(--color-background) 50%, transparent);
     --color-background: var(--white);
     --color-background-secondary: var(--grey-200);
     --color-foreground: var(--black);

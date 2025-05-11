@@ -27,6 +27,7 @@ import Unknown from "../icons/shape_unknown.svg"
 const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content } = Astro.props
 const formattedDate = formatDate(dateOccurred)
 // const formattedDate = dateOccurred
+// console.log(content)
 ---
 <div class="report-card">
   <div class="info">
@@ -76,9 +77,10 @@ const formattedDate = formatDate(dateOccurred)
 </div>
 
 {content &&
-  <dialog popover id={`details_${id}`} class="detail-modal">
+  <dialog popover id={`details_${id}`} class="detail-modal" data-color-scheme="inverse">
     { id && <span class="utility">{id}</span>}
-    <Fragment set:html={content} />
+    {/* <Fragment set:html={content} /> */}
+    <pre><Fragment set:text={content} /></pre>
     <button popovertarget={`details_${id}`}>Close</button>
     {/* </form> */}
   </dialog>
@@ -142,9 +144,24 @@ const formattedDate = formatDate(dateOccurred)
     border-radius: var(--radius-sm);
     padding-inline: var(--space-sm);
     padding-block: var(--space-sm);
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: var(--space-sm);
     border: none;
+    /* justify-content: center; */
+    margin: 0 auto;
+    align-self: center;/* optional: breaks long words */
+    max-height: calc(100dvh - var(--page-margin) * 2);
+    /* display: flex; */
+    flex-direction: column;
+    align-items: stretch;
+    /* background-color: var(--background-blur-color); */
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      flex: 0 1 auto;
+      overflow-y: auto;
+    }
 
     &:popover-open {
       display: flex;
