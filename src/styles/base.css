@@ -1,5 +1,13 @@
 * {
   box-sizing: border-box;
+  /* Browser Resets */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
@@ -21,5 +29,9 @@ img {
 
 button {
   cursor: pointer;
+}
+
+svg {
+  width: 100%;
 }
 

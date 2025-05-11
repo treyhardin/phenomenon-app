@@ -14,6 +14,10 @@ input[type="search"] {
     max-width: unset;
     border-radius: var(--radius-sm);
     padding: var(--input-padding);
+
+    &::placeholder {
+        color: var(--color-foreground-secondary);
+    }
 }
 
 /* input::placeholder {
@@ -28,6 +32,7 @@ button {
     transition: var(--anim-sm);
     cursor: pointer;
     color: var(--color-background);
+    background-color: var(--color-foreground);
 
     &:hover {
         background-color: var(--color-accent-01);

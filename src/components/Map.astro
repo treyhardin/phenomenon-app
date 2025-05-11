@@ -346,22 +346,34 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
       --pin-size: calc( var(--pin-scale) * var(--pin-size-range) + var(--pin-size-min));
       /* --pin-size: 10px; */
 
-      background-color: color-mix(in srgb, var(--color-accent-01) calc(var(--pin-scale) * 100%), var(--grey-200));
+      /* background-color: color-mix(in srgb, var(--color-accent-01) calc(var(--pin-scale) * 100%), var(--grey-200)); */
       /* background-color: var(--white); */
       background-size: cover;
-      width: var(--pin-size);
-      height: var(--pin-size);
+      width: 20px;
+      height: 20px;
+      /* width: var(--pin-size);
+      height: var(--pin-size); */
       border-radius: 50%;
+      padding: 10px;
       cursor: pointer;
       transition: width var(--anim-sm), height var(--anim-sm), background-color var(--anim-sm);
+
+      &::after {
+        content: "";
+        position: absolute;
+        inset: calc(20% * (1 - var(--pin-scale)) + 20%);
+        /* background-color: red; */
+        background-color: color-mix(in srgb, var(--color-accent-01) calc(var(--pin-scale) * 100%), var(--grey-200));
+        border-radius: 50%;
+      }
     }
 
     .marker:hover {
       /* scale: 1.1; */
-      --hover-size: 20px;
+      /* --hover-size: 20px;
       width: var(--hover-size);
-      height: var(--hover-size);
-      background-color: var(--color-accent-02);
+      height: var(--hover-size); */
+      background-color: var(--color-background);
     }
 
 
