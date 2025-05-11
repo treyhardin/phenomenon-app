@@ -1,6 +1,27 @@
 ---
 import { formatDate } from "../lib/utils"
-
+import Chevron from "../icons/shape_chevron.svg"
+import Disk from "../icons/shape_disk.svg"
+import Cigar from "../icons/shape_cigar.svg"
+import Circle from "../icons/shape_circle.svg"
+import Cone from "../icons/shape_cone.svg"
+import Cross from "../icons/shape_cross.svg"
+import Cube from "../icons/shape_cube.svg"
+import Cylinder from "../icons/shape_cylinder.svg"
+import Diamond from "../icons/shape_diamond.svg"
+import Egg from "../icons/shape_egg.svg"
+import Fireball from "../icons/shape_fireball.svg"
+import Flash from "../icons/shape_flash.svg"
+import Formation from "../icons/shape_formation.svg"
+import Light from "../icons/shape_light.svg"
+import Orb from "../icons/shape_orb.svg"
+import Oval from "../icons/shape_oval.svg"
+import Rectangle from "../icons/shape_rectangle.svg"
+import Sphere from "../icons/shape_sphere.svg"
+import Star from "../icons/shape_star.svg"
+import Teardrop from "../icons/shape_teardrop.svg"
+import Triangle from "../icons/shape_triangle.svg"
+import Unknown from "../icons/shape_unknown.svg"
 // interface Props extends ReportCard;
 
 const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content } = Astro.props
@@ -21,7 +42,35 @@ const formattedDate = formatDate(dateOccurred)
       { (canonical_state || state) && <span>, {canonical_state ? canonical_state : state}</span>}
       { (canonical_country || country) && <span>, {canonical_country ? canonical_country : country}</span>}
     </div>
-    { shape && <span>{shape}</span>}
+    {shape &&
+      <div class="shape-info">
+        <span class="shape-icon">
+          {shape === "Disk" && <Disk />}
+          {shape === "Chevron" && <Chevron />}
+          {shape === "Cigar" && <Cigar />}
+          {shape === "Circle" && <Circle />}
+          {shape === "Cone" && <Cone />}
+          {shape === "Cross" && <Cross />}
+          {shape === "Cube" && <Cube />}
+          {shape === "Cylinder" && <Cylinder />}
+          {shape === "Diamond" && <Diamond />}
+          {shape === "Egg" && <Egg />}
+          {shape === "Fireball" && <Fireball />}
+          {shape === "Flash" && <Flash />}
+          {shape === "Formation" && <Formation />}
+          {shape === "Light" && <Light />}
+          {shape === "Orb" && <Orb />}
+          {shape === "Oval" && <Oval />}
+          {shape === "Rectangle" && <Rectangle />}
+          {shape === "Sphere" && <Sphere />}
+          {shape === "Star" && <Star />}
+          {shape === "Teardrop" && <Teardrop />}
+          {shape === "Triangle" && <Triangle />}
+          {(shape === "Unknown" || shape === "Other" || shape === "Changing") && <Unknown />}
+        </span>
+        { shape && <span>{shape}</span>}
+      </div>
+    }
   </div>
   {content && <button data-style="secondary" popovertarget={`details_${id}`}>View Details</button>}
 </div>
@@ -53,22 +102,37 @@ const formattedDate = formatDate(dateOccurred)
 
     .info {
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      /* justify-content: space-between; */
       color: var(--color-foreground-secondary);
     }
 
     .details {
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      gap: var(--space-xs);
+      flex-direction: column;
+      /* justify-content: space-between; */
+      align-items: flex-start;
+      gap: var(--space-2xs);
     }
 
     .location {
       display: flex;
       flex-direction: row;
+    }
+
+    .shape-info {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-3xs);
+
+      .shape-icon {
+        width: var(--icon-sm);
+        height: var(--icon-sm);
+        display: flex;
+        place-items: center;
+      }
     }
   }
 
