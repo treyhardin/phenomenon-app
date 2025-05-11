@@ -26,6 +26,7 @@ const { activePath } = Astro.props
     gap: var(--space-2xs);
     min-width: 0;
     flex: 0 0 min(calc(100% - var(--page-margin) * 2), 20rem);
+    max-height: calc(100% - var(--page-margin) * 2);
 
     .content {
       flex: 0 1 100%;
@@ -39,6 +40,13 @@ const { activePath } = Astro.props
       backdrop-filter: var(--background-blur);
       /* overflow-y: auto; */
       /* background-color: red; */
+    }
+  }
+
+  @media screen and (width <= 768px) {
+    .sidebar {
+      flex: 0 0 calc(100% - var(--page-margin) * 2);
+      align-self: flex-end;
     }
   }
 </style>

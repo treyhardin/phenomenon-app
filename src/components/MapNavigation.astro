@@ -1,6 +1,7 @@
 ---
 import ReportList from "./ReportList.astro"
 import Pin from '../icons/pin.svg'
+import Hamburger from '../icons/hamburger.svg'
 import Close from '../icons/close.svg'
 import ArrowBack from '../icons/arrow-back.svg'
 
@@ -11,20 +12,31 @@ interface Props {
   locations: LocationLink[] | undefined;
   breadcrumbs?: Breadcrumb[];
   menuTitle?: string;
+  defaultOpenMobile?: boolean;
 }
 
-const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle } = Astro.props
+const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle, defaultOpenMobile } = Astro.props
 // console.log(countries)
 ---
-<div class="map-navigation">
-  <button 
-    data-style="secondary" 
-    class="location-toggle"
-    popovertarget="location-menu"
-  >
-    <span class="button-icon"><Pin /></span>
-    {activeLocation ? activeLocation : "All Locations"}
-  </button>
+<div class="map-navigation" id="map-navigation" data-menu-open={defaultOpenMobile ? "true" : "false"}>
+  <div class="menu-buttons">
+    <button 
+      data-style="secondary" 
+      class="location-toggle"
+      popovertarget="location-menu"
+    >
+      <span class="button-icon"><Pin /></span>
+      {activeLocation ? activeLocation : "All Locations"}
+    </button>
+    <button
+      data-style="primary" 
+      id="reports-toggle"
+      class="reports-toggle"
+    >
+      <span class="button-icon icon-open"><Hamburger /></span>
+      <span class="button-icon icon-close"><Close /></span>
+    </button>
+  </div>
   <ReportList 
     reports={reports}
   />
@@ -60,6 +72,21 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
   </button>
 </dialog>
 
+<script>
+
+  document.addEventListener("astro:page-load", () => {
+
+    const navigation = document.getElementById('map-navigation')
+    const toggleButton = document.getElementById('reports-toggle')
+
+    if (navigation && toggleButton) {
+      toggleButton.addEventListener("click", () => {
+        navigation.dataset.menuOpen === "true" ? navigation.dataset.menuOpen = "false" : navigation.dataset.menuOpen = "true"
+      })
+    }
+  })
+</script>
+
 <style>
   .map-navigation {
     display: flex;
@@ -67,17 +94,43 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
     min-height: 0;
     gap: var(--space-2xs);
 
+    .menu-buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: stretch;
+      gap: var(--space-3xs);
+    }
+
     .location-toggle {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
       gap: var(--space-3xs);
+      flex: 0 1 100%;
+    }
+
+    .reports-toggle {
+      /* color: inherit; */
+      aspect-ratio: 1 / 1;
+      flex: 0 0 auto;
+      display: none;
+
+      .icon-close {
+        display: none;
+      }
+
+      .icon-open {
+        display: flex;
+      }
     }
 
     .button-icon {
       width: var(--icon-sm);
       height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 
@@ -140,6 +193,8 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
     .locations-list {
       display: flex;
       flex-direction: column;
+      /* flex: 0 0 0px; */
+      /* max-height: 0; */
       /* flex: 0 0 min(100%, 30rem); */
 
       .location-link {
@@ -206,6 +261,29 @@ const { activeLocation, activePath, reports, locations, breadcrumbs, menuTitle }
       /* background-color: transparent; */
       opacity: 0;
     }
+  }
+
+  @media screen and (width <= 768px) {
+
+    .map-navigation {
+      flex-direction: column-reverse;
+    }
+
+    .map-navigation .reports-toggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .map-navigation[data-menu-open="true"] .reports-toggle {
+        .icon-close {
+          display: flex;
+        }
+
+        .icon-open {
+          display: none;
+        }
+      }
   }
   
 </style>

@@ -51,7 +51,7 @@ const getReports = async () => {
 
 const states = await getStates()
 const reports = await getReports()
-console.log(reports)
+// console.log(reports)
 ---
 <LayoutApp
   title={canonical_name}
@@ -70,6 +70,7 @@ console.log(reports)
       }
     ]}
     menuTitle={`${canonical_name}`}
+    defaultOpenMobile={true}
   />
   <Map 
     slot="main"

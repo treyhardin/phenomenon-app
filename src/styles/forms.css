@@ -27,6 +27,7 @@ button {
     border-radius: var(--radius-sm);
     transition: var(--anim-sm);
     cursor: pointer;
+    color: var(--color-background);
 
     &:hover {
         background-color: var(--color-accent-01);

@@ -29,6 +29,15 @@ const { reports } = Astro.props
     </div>
 }
 
+<style is:global>
+    @media screen and (width <= 768px) {
+        .map-navigation[data-menu-open="true"] .report-list {
+            /* rotate: 20deg; */
+            max-height: 30dvh;
+        }
+    }
+</style>
+
 <style>
     .report-list {
         /* background-color: var(--color-background-secondary); */
@@ -37,8 +46,16 @@ const { reports } = Astro.props
         max-height: 100%;
         overflow-y: auto;
         flex: 0 1 100%;
+        /* max-height: 20px; */
+        transition: max-height var(--anim-sm) allow-discrete;
         /* padding-inline: var(--page-margin);
         padding-block: var(--space-xs); */
         /* max-width: 40rem; */
+    }
+
+    @media screen and (width <= 768px) {
+        .report-list {
+            max-height: 0;
+        }
     }
 </style>

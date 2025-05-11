@@ -70,6 +70,7 @@ const otherCities: LocationLink[] | undefined = await getCities(countryData?.dat
     ]}
     menuTitle={stateData?.data.canonical_name}
     locations={otherCities}
+    defaultOpenMobile={true}
   />
   <Map 
     slot="main"
