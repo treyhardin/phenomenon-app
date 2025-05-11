@@ -2,33 +2,75 @@
 import { getCollection } from "astro:content"
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const { longitude, latitude, zoom } = Astro.props
+// fs.writeFile('/test.txt', content, err => {
+//   if (err) {
+//     console.error(err);
+//   } else {
+//     // file written successfully
+//   }
+// });
 
-const cities = await getCollection('cities')
+
+const { longitude, latitude, zoom, zoomLevel } = Astro.props
+
+
+// const countries = await getCollection('countries')
+// const states = await getCollection('states')
+// const cities = await getCollection('cities')
 
 // console.log(cities)
 
-const cityPins = {
-  type: 'FeatureCollection',
-  features: cities.filter((city) => city.data.latitude && city.data.longitude).map((city) => ({
-    type: 'Feature',
-    geometry: {
-      type: 'Point',
-      coordinates: [city.data.longitude, city.data.latitude]
-    },
-    properties: {
-      title: city.data.canonical_name,
-      recordCount: city.data.record_count,
-      url: `/${city.data.country}/${city.data.state}/${city.id}`
-    }
-  }))
-}
+// const countryPins = {
+//   type: 'FeatureCollection',
+//   features: countries.filter((country) => country.data.latitude && country.data.longitude).map((country) => ({
+//     type: 'Feature',
+//     geometry: {
+//       type: 'Point',
+//       coordinates: [country.data.longitude, country.data.latitude]
+//     },
+//     properties: {
+//       title: country.data.canonical_name,
+//       recordCount: country.data.record_count,
+//       url: `/${country.data.country}`
+//     }
+//   }))
+// }
+
+// const statePins = {
+//   type: 'FeatureCollection',
+//   features: states.filter((states) => states.data.latitude && states.data.longitude).map((states) => ({
+//     type: 'Feature',
+//     geometry: {
+//       type: 'Point',
+//       coordinates: [states.data.longitude, states.data.latitude]
+//     },
+//     properties: {
+//       title: states.data.canonical_name,
+//       recordCount: states.data.record_count,
+//       url: `/${states.data.country}/${states.data.state}`
+//     }
+//   }))
+// }
+
+// const cityPins = {
+//   type: 'FeatureCollection',
+//   features: cities.filter((city) => city.data.latitude && city.data.longitude).map((city) => ({
+//     type: 'Feature',
+//     geometry: {
+//       type: 'Point',
+//       coordinates: [city.data.longitude, city.data.latitude]
+//     },
+//     properties: {
+//       title: city.data.canonical_name,
+//       recordCount: city.data.record_count,
+//       url: `/${city.data.country}/${city.data.state}/${city.id}`
+//     }
+//   }))
+// }
 ---
 <main 
   class="map" 
   id="map"
-  data-pins={JSON.stringify(cityPins)}
-  data-is-loaded="false"
   data-color-scheme="inverse"
   transition:persist
 >
@@ -37,19 +79,85 @@ const cityPins = {
   id="map-data"
   data-longitude={longitude ? longitude : null}
   data-latitude={latitude ? latitude : null}
-  data-zoom={zoom ? zoom : null}
+  data-zoom-level={zoomLevel}
 ></div>
 
 <script>
-  import mapboxgl, { LngLat, Map } from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+  import type { Feature, FeatureCollection, GeoJsonObject } from 'geojson';
+  import mapboxgl, { LngLat, Map, Marker } from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+
+  async function getData() {
+    const url = "/api/getLocations";
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const json = await response.json();
+
+      const countryData: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: json.countries.filter((country) => country.data.latitude && country.data.longitude).map((country) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [country.data.longitude, country.data.latitude]
+          },
+          properties: {
+            title: country.data.canonical_name,
+            recordCount: country.data.record_count,
+            url: `/${country.id}`
+          }
+        }))
+      }
+
+      const stateData: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: json.states.filter((state) => state.data.latitude && state.data.longitude).map((state) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [state.data.longitude, state.data.latitude]
+          },
+          properties: {
+            title: state.data.canonical_name,
+            recordCount: state.data.record_count,
+            url: `/${state.data.country}/${state.id}`
+          }
+        }))
+      }
+
+      const cityData: FeatureCollection = {
+        type: 'FeatureCollection',
+        features: json.cities.filter((city) => city.data.latitude && city.data.longitude).map((city) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [city.data.longitude, city.data.latitude]
+          },
+          properties: {
+            title: city.data.canonical_name,
+            recordCount: city.data.record_count,
+            url: `/${city.data.country}/${city.data.state}/${city.id}`
+          }
+        }))
+      }
+      return loadMap(countryData, stateData, cityData)
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
 
   const DEFAULT_COORDS = new LngLat(-95.712891, 37.090240)
   const DEFAULT_ZOOM = 2.5
+  const ZOOM_LEVELS = [1, 2.5,5,8]
 
   let map: Map
   let longitude: string | undefined
   let latitude: string | undefined
-  let zoom: string | undefined
+  let zoomLevel: number | undefined
 
   mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
 
@@ -57,83 +165,164 @@ const cityPins = {
     const mapData = document.getElementById("map-data")
     longitude = mapData?.dataset.longitude
     latitude = mapData?.dataset.latitude
-    zoom = mapData?.dataset.zoom
+    zoomLevel = mapData?.dataset.zoomLevel ? parseFloat(mapData.dataset.zoomLevel) : DEFAULT_ZOOM
+
+    console.log(zoomLevel)
   }
 
-  const loadMap = () => {
+  const loadMap = (countryData: FeatureCollection, stateData: FeatureCollection, cityData: FeatureCollection) => {
 
-    console.log("Load MAP!!!")
-
-
-    const mapElement = document.getElementById("map")
-    const pins = mapElement?.dataset.pins
-    const geojson = pins ? JSON.parse(mapElement?.dataset.pins) : null
-
-    // console.log(pins)
-    console.log(geojson)
 
     map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/trumancreative/cm6ihkvlu006h01rychf1hm9g', // style URL
       center: longitude && latitude ? new LngLat(parseFloat(longitude), parseFloat(latitude)) : DEFAULT_COORDS, // starting position [lng, lat]
-      zoom: zoom ? parseFloat(zoom) : DEFAULT_ZOOM, // starting zoom
+      zoom: ZOOM_LEVELS[zoomLevel] // starting zoom
     });
 
-    const checkIsInView = (pin) => {
-      if (!map) return false
-      return map.getBounds()?.contains(pin.getLatLng())
+    // console.log(map.getZoom())
+
+    const createPins = (features: Feature[]) => {
+
+      return features.map((feature: Feature) => {
+
+        const el = document.createElement('a');
+        el.href = feature.properties?.url
+        el.className = 'marker';
+        el.style.setProperty("--record-count", feature.properties?.recordCount)
+
+        const popup = new mapboxgl.Popup({ 
+          offset: 15, 
+          closeButton: false,
+          closeOnClick: false
+        }) // add popups
+        .setHTML(
+          `<h3 class="utility">${feature.properties?.title}</h3>
+          <span class="utility-small">&#91;${feature.properties?.recordCount.toLocaleString()}&#93;</span>
+          `
+        )
+
+        el.addEventListener("mouseenter", () => {
+          popup.addTo(map)
+        })
+
+        el.addEventListener("mouseleave", () => {
+          popup.remove(map)
+        })
+
+        // el.addEventListener("click", () => )
+
+        // popup.on('open', () => {
+        //     console.log('popup was opened');
+        // });
+
+        return new mapboxgl.Marker(el)
+          .setLngLat(feature.geometry.coordinates)
+          .setPopup(popup)
+          // .addTo(map);
+
+          
+
+      })
     }
 
-    for (const feature of geojson.features) {
+    const addPins = (pins: Marker[]) => {
+      for (let i = 0; i < pins.length; i++) {
+        pins[i].addTo(map)
+      }
+    }
 
-      const el = document.createElement('div');
-      el.className = 'marker';
-      el.style.setProperty("--record-count", feature.properties.recordCount)
+    const removePins = (pins: Marker[]) => {
+      for (let i = 0; i < pins.length; i++) {
+        pins[i].remove(map)
+      }
+    }
 
-      const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }) // add popups
-      .setHTML(
-        `<h3 class="utility">${feature.properties.title}</h3>
-        <p class="utility-small">${feature.properties.recordCount} ${feature.properties.recordCount > 1 ? "Reports" : "Report"}</p>
-        <a href=${feature.properties.url}>View Details</a>
-        `
-      )
+    const countryPins = createPins(countryData.features)
+    const statePins = createPins(stateData.features)
+    const cityPins = createPins(cityData.features)
 
+    switch (zoomLevel) {
+      case 0:
+        addPins(countryPins)
+        break;
+      case 1:
+        addPins(statePins)
+        break;
+      case 2:
+        addPins(cityPins)
+        break;
+      case 3:
+        addPins(cityPins)
+        break;
+      default:
+        addPins(countryPins)
+        break;
+    }
+    // addPins(countryPins)
+    // let zoomLevel = 0
 
-      // map.on('move', () => {
-      //   console.log(checkIsInView(feature.geometry.coordinates))
-      //   // console.log('Map is moving');
-      // });
+    const handleZoom = () => {
 
-      popup.on('open', () => {
-          console.log('popup was opened');
-      });
-
-      new mapboxgl.Marker(el)
-        .setLngLat(feature.geometry.coordinates)
-        .setPopup(popup)
-        .addTo(map);
+      const currentZoom = map.getZoom()
       
-      // new mapboxgl.Marker().setLngLat(feature.geometry.coordinates).addTo(map);  // Replace this line with code from step 7-2
+      // City Level
+      if (currentZoom >= ZOOM_LEVELS[3] && zoomLevel !== 3) {
+        removePins(countryPins)
+        removePins(statePins)
+        addPins(cityPins)
+        zoomLevel = 3
+      } 
+      
+      // State Level
+      if (currentZoom >= ZOOM_LEVELS[2] && currentZoom < ZOOM_LEVELS[3] && zoomLevel !== 2) {
+        removePins(countryPins)
+        removePins(statePins)
+        addPins(cityPins)
+        zoomLevel = 2
+      } 
+      
+      // Country Level
+      if (currentZoom < ZOOM_LEVELS[2] && zoomLevel !== 1) {
+        removePins(countryPins)
+        addPins(statePins)
+        removePins(cityPins)
+        zoomLevel = 1
+      } 
+      
+      // World Level
+      if (currentZoom < ZOOM_LEVELS[1] && zoomLevel !== 0) {
+        addPins(countryPins)
+        removePins(statePins)
+        removePins(cityPins)
+        zoomLevel = 0
+      }
     }
-    // mapElement?.dataset.isloaded = "true"
+
+    map.on('zoom', () => handleZoom())
   }
 
   document.addEventListener("astro:page-load", (event) => {
-    // loadMap()
     updateMapData()
     let targetCoords = DEFAULT_COORDS
-    let targetZoom = DEFAULT_ZOOM
+    // let targetZoom = DEFAULT_ZOOM
 
     if (latitude && longitude) targetCoords = new LngLat(parseFloat(longitude), parseFloat(latitude))
-    if (zoom) targetZoom = parseFloat(zoom)
+    // if (zoom) targetZoom = parseFloat(zoom)
+
 
     if (map) {
-      map.panTo(targetCoords)
-      map.zoomTo(targetZoom)
+      map.flyTo({
+        center: targetCoords,
+        zoom: ZOOM_LEVELS[zoomLevel],
+        essential: true // optional; respects user motion settings
+      });
+    } else {
+      getData()
     }
   });
 
-  loadMap()
+  getData()
 
 </script>
 
@@ -147,16 +336,18 @@ const cityPins = {
       --record-count: 1; /* To be overwritten per pin */
 
       /* Settings */
-      --pin-size-min: 2px;
-      --pin-size-max: 4px;
+      --pin-size-min: 5px;
+      --pin-size-max: 10px;
       --pin-size-threshold: 50;
 
       /* Size Calculation */
       --pin-size-range: calc(var(--pin-size-max) - var(--pin-size-min));
       --pin-scale: min(calc(var(--record-count) / var(--pin-size-threshold)), 1);
       --pin-size: calc( var(--pin-scale) * var(--pin-size-range) + var(--pin-size-min));
+      /* --pin-size: 10px; */
 
-      background-color: var(--white);
+      background-color: color-mix(in srgb, var(--color-accent-01) calc(var(--pin-scale) * 100%), var(--grey-200));
+      /* background-color: var(--white); */
       background-size: cover;
       width: var(--pin-size);
       height: var(--pin-size);
@@ -167,10 +358,10 @@ const cityPins = {
 
     .marker:hover {
       /* scale: 1.1; */
-      --hover-size: 10px;
+      --hover-size: 20px;
       width: var(--hover-size);
       height: var(--hover-size);
-      background-color: var(--color-accent-01);
+      background-color: var(--color-accent-02);
     }
 
 
@@ -181,6 +372,14 @@ const cityPins = {
     .mapboxgl-popup-content {
       border-radius: var(--radius-sm);
       color: var(--color-foreground);
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-3xs);
+      padding: var(--space-xs);
+
+      & * {
+        margin: 0;
+      }
       /* font: inherit; */
     }
   }

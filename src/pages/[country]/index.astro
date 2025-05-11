@@ -39,17 +39,19 @@ const getStates = async () => {
 
 const getReports = async () => {
   const { data: reports, error } = await supabase
-    .from('Clean Data')
+    .from('clean_data_mv')
     .select()
     .eq('canonical_country', id)
-    .not('dateOccurred', 'is', null)
+    // .not('dateOccurred', 'is', null)
     .order('dateOccurred', {ascending: false})
     .limit(100)
   return reports
 }
 
+
 const states = await getStates()
 const reports = await getReports()
+console.log(reports)
 ---
 <LayoutApp
   title={canonical_name}
@@ -73,5 +75,6 @@ const reports = await getReports()
     slot="main"
     longitude={longitude}
     latitude={latitude}
+    zoomLevel={1}
   />
 </LayoutApp>

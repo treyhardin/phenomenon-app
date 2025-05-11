@@ -17,6 +17,7 @@
   --color-background-tertiary: var(--grey-600);
   --color-foreground: var(--white);
   --color-foreground-secondary: var(--grey-400);
+  /* --color-foreground-secondary: red; */
   --color-neutral: var(--grey-600);
 
   --color-accent-01: var(--green);
@@ -33,7 +34,8 @@
     --color-foreground: var(--black);
     --color-foreground-secondary: var(--grey-800);
 
-    --color-accent-01: var(--blue);
+    --color-accent-01: var(--green);
+    --color-accent-02: var(--blue);
   }
 }
 
@@ -47,7 +49,8 @@ html {
     --color-foreground: var(--black);
     --color-foreground-secondary: var(--grey-800);
 
-    --color-accent-01: var(--blue);
+    --color-accent-01: var(--green);
+    --color-accent-02: var(--blue);
 
     color: var(--color-foreground);
   }

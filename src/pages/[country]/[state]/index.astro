@@ -16,13 +16,15 @@ export async function getStaticPaths() {
     },
     props: {
       stateName: state.data.canonical_name,
-      recordCount: state.data.record_count
+      recordCount: state.data.record_count,
+      latitude: state.data.latitude,
+      longitude: state.data.longitude
     }
   }))
   return paths.filter(Boolean) // Remove any null entries
 }
 
-const { stateName, recordCount } = Astro.props
+const { stateName, recordCount, latitude, longitude } = Astro.props
 const { country, state } = Astro.params
 // console.log(cities)
 
@@ -80,6 +82,10 @@ const reports = await getReports()
   />
   <Map 
     slot="main"
+    zoom={5}
+    longitude={longitude}
+    latitude={latitude}
+    zoomLevel={2}
   />
   <!-- <LocationList
     breadcrumbs={[

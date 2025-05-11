@@ -17,14 +17,16 @@ export async function getStaticPaths() {
       },
       props: {
         recordCount: city.data.record_count,
-        name: city.data.canonical_name
+        latitude: city.data.latitude,
+        longitude: city.data.longitude,
+        cityName: city.data.canonical_name
       }
     })
   )
   return paths.filter(Boolean) // Remove any null entries
 }
 const { country, state, city } = Astro.params
-const { recordCount, name } = Astro.props
+const { recordCount, cityName, latitude, longitude } = Astro.props
 
 const countryData = await getEntry('countries', country)
 const stateData = await getEntry('states', state)
@@ -47,13 +49,13 @@ const reports: ReportCard[] | null = await getReports()
 const otherCities: LocationLink[] | undefined = await getCities(countryData?.data.id, stateData?.data.id)
 ---
 <LayoutApp
-  title={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
+  title={`${cityName}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
   reports={reports}
   activePath="map"
 >
   <MapNavigation 
     slot="sidebar"
-    activeLocation={`${name}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
+    activeLocation={`${cityName}, ${stateData?.data.canonical_name}, ${countryData?.data.canonical_name}`}
     activePath={`/${country}/${state}/${city}`}
     reports={reports}
     breadcrumbs={[
@@ -71,5 +73,9 @@ const otherCities: LocationLink[] | undefined = await getCities(countryData?.dat
   />
   <Map 
     slot="main"
+    zoom={4}
+    latitude={latitude}
+    longitude={longitude}
+    zoomLevel={3}
   />
 </LayoutApp>
