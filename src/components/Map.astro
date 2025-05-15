@@ -175,7 +175,7 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
 
     map = new mapboxgl.Map({
       container: 'map', // container ID
-      style: 'mapbox://styles/trumancreative/cm6ihkvlu006h01rychf1hm9g', // style URL
+      style: 'mapbox://styles/trumancreative/cm6ihkvlu006h01rychf1hm9g?optimize=true', // style URL
       center: longitude && latitude ? new LngLat(parseFloat(longitude), parseFloat(latitude)) : DEFAULT_COORDS, // starting position [lng, lat]
       zoom: ZOOM_LEVELS[zoomLevel] // starting zoom
     });
@@ -331,6 +331,17 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
     position: absolute;
     inset: 0;
     z-index: 0;
+
+    /* &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 30svh;
+      background: linear-gradient(0deg, rgba(0,0,0,1), rgba(0,0,0,0));
+      z-index: 2;
+    } */
 
     .marker {
       --record-count: 1; /* To be overwritten per pin */

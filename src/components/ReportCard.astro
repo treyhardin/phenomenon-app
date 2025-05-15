@@ -22,19 +22,39 @@ import Star from "../icons/shape_star.svg"
 import Teardrop from "../icons/shape_teardrop.svg"
 import Triangle from "../icons/shape_triangle.svg"
 import Unknown from "../icons/shape_unknown.svg"
+import { checkIsImage, checkIsVideo } from "../lib/utils"
+import { Image } from "astro:assets"
 // interface Props extends ReportCard;
 
-const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content } = Astro.props
+const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content, media } = Astro.props
 const formattedDate = formatDate(dateOccurred)
-// const formattedDate = dateOccurred
-// console.log(content)
 ---
 <div class="report-card">
   <div class="info">
     { dateOccurred && formattedDate && <p>{formattedDate}</p>}
     { id && <span>{id}</span>}
   </div>
-  { summary && <p class="h6">{summary}</p>}
+
+
+  <div class="summary">
+    { media?.length > 0 && 
+      <div class="media">
+        { checkIsImage(media[0]) &&
+          <Image 
+            src={media[0]}
+            alt={`Image from report ${id}`}
+            width="100"
+            height="100"
+          />
+        }
+        {checkIsVideo(media[0]) &&
+          <video src={media[0]} autoplay loop muted />
+        }
+      </div>
+    }
+    { summary && <p class="h6">{summary}</p>}
+  </div>
+
   <!-- {dateOccurred} -->
   <div class="details">
 
@@ -73,14 +93,31 @@ const formattedDate = formatDate(dateOccurred)
       </div>
     }
   </div>
-  {content && <button data-style="secondary" popovertarget={`details_${id}`}>View Details</button>}
+  { (content || media?.length > 0) && <button data-style="secondary" popovertarget={`details_${id}`}>View Details</button>}
 </div>
 
-{content &&
+{ (content || media?.length > 0) &&
   <dialog popover id={`details_${id}`} class="detail-modal" data-color-scheme="inverse">
     { id && <span class="utility">{id}</span>}
     {/* <Fragment set:html={content} /> */}
-    <pre><Fragment set:text={content} /></pre>
+    { media?.length > 0 && 
+      <div class="media">
+        { media.map((asset) => {
+          if (checkIsImage(asset)) return (
+            <Image 
+              src={media[0]}
+              alt={`Image from report ${id}`}
+              width="100"
+              height="100"
+            />
+          )
+          else if (checkIsVideo(asset)) return (
+            <video src={asset} />
+          )
+        })}
+      </div>
+    }
+    { content && <pre><Fragment set:text={content} /></pre> }
     <button popovertarget={`details_${id}`}>Close</button>
     {/* </form> */}
   </dialog>
@@ -104,10 +141,33 @@ const formattedDate = formatDate(dateOccurred)
 
     .info {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      /* justify-content: space-between; */
+      flex-direction: row;
+      /* align-items: flex-start; */
+      justify-content: space-between;
+      align-self: stretch;
       color: var(--color-foreground-secondary);
+    }
+
+    .summary {
+      display: flex;
+      flex-direction: row;
+      justify-content: stretch;
+      align-items: center;
+      gap: var(--space-2xs);
+
+      .media {
+        flex: 0 0 4rem;
+        min-width: 0;
+
+        img,
+        video {
+          width: 100%;
+          min-width: 0;
+          aspect-ratio: 1 / 1;
+          height: auto;
+          object-fit: cover;
+        }
+      }
     }
 
     .details {
@@ -155,6 +215,19 @@ const formattedDate = formatDate(dateOccurred)
     flex-direction: column;
     align-items: stretch;
     /* background-color: var(--background-blur-color); */
+
+    .media {
+      display: flex;
+      flex-direction: row;
+      gap: var(--space-3xs);
+      justify-content: stretch;
+
+      img,
+      video {
+        flex: 0 1 100%;
+        height: auto;
+      }
+    }
 
     pre {
       white-space: pre-wrap;

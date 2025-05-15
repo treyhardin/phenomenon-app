@@ -20,7 +20,7 @@ const getReports = async () => {
 		.select()
 		.not('dateOccurred', 'is', null)
 		.order('dateOccurred', {ascending: false})
-		.limit(60)
+		.limit(40)
 	return reports
 }
 
