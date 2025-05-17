@@ -37,7 +37,7 @@ const formattedDate = formatDate(dateOccurred)
 
 
   <div class="summary">
-    { media?.length > 0 && 
+    <!-- { media?.length > 0 && 
       <div class="media">
         { checkIsImage(media[0]) &&
           <Image 
@@ -51,7 +51,7 @@ const formattedDate = formatDate(dateOccurred)
           <video src={media[0]} autoplay loop muted />
         }
       </div>
-    }
+    } -->
     { summary && <p class="h6">{summary}</p>}
   </div>
 
@@ -101,7 +101,7 @@ const formattedDate = formatDate(dateOccurred)
     { id && <span class="utility">{id}</span>}
     {/* <Fragment set:html={content} /> */}
     <div class="inner-content">
-      { media?.length > 0 && 
+      {/* { media?.length > 0 && 
         <div class="media">
           { media.map((asset) => {
             if (checkIsImage(asset)) return (
@@ -117,7 +117,7 @@ const formattedDate = formatDate(dateOccurred)
             )
           })}
         </div>
-      }
+      } */}
       { content && <pre><Fragment set:text={content} /></pre> }
     </div>
     <button popovertarget={`details_${id}`}>Close</button>
