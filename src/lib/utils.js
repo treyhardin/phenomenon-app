@@ -5,7 +5,7 @@ export const formatDate = (date) => {
 }
 
 export const checkIsImage = (url) => {
-  const imageExtensions = ['.gif', '.jpg', '.jpeg', '.png'] // you can add more extensions
+  const imageExtensions = ['.gif', '.jpg', '.jpeg', '.png', '.tiff', '.webp', '.svg', '.avif'] // you can add more extensions
 
   let isImage
 

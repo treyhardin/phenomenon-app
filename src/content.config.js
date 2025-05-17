@@ -56,10 +56,32 @@ const shapes = defineCollection({
   }
 });
 
+const media = defineCollection({
+  loader: async () => {
+
+    const entries = {}
+
+    const mediaById = import.meta.glob('/public/media/*/*', { eager: true, as: 'url' })
+
+    // console.log(mediaById)
+    for (const path in mediaById) {
+      const [, , , id] = path.split('/') // ['', 'public', 'media', 'MUFON_142298', 'file.jpg']
+      if (!entries[id]) entries[id] = []
+      entries[id].push(mediaById[path])
+    }
+
+    return Object.entries(entries).map(([id, urls]) => ({
+      id, urls
+    }))
+
+  }
+})
+
 
 export const collections = { 
   countries, 
   states,
   cities,
-  shapes
+  shapes,
+  media
 };

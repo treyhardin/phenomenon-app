@@ -24,8 +24,34 @@ const getReports = async () => {
 	return reports
 }
 
+// const mediaById = await import.meta.glob('/public/media/*/*', { eager: true, as: 'url' })
+// console.log(mediaById)
+
 const reports = await getReports()
 const countries = await getCountries()
+
+// const grouped = {}
+
+// const mediaById = import.meta.glob('/public/media/*/*', { eager: true, as: 'url' })
+
+// const entries = {}
+
+// for (const path in mediaById) {
+//   const [, , , id] = path.split('/') // ['', 'public', 'media', 'MUFON_142298', 'file.jpg']
+//   if (!entries[id]) entries[id] = []
+//   entries[id].push(mediaById[path])
+// }
+
+// const contentCollection = Object.entries(entries).map(([id, urls]) => ({
+//   id,
+//   data: { urls }
+// }))
+
+
+
+// console.log(contentCollection)
+
+// console.log(reports)
 ---
 <LayoutApp
 	title='UAP Database'

@@ -24,10 +24,18 @@ import Triangle from "../icons/shape_triangle.svg"
 import Unknown from "../icons/shape_unknown.svg"
 import { checkIsImage, checkIsVideo } from "../lib/utils"
 import { Image } from "astro:assets"
-// interface Props extends ReportCard;
+import { getEntry } from "astro:content"
 
 const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content, media } = Astro.props
 const formattedDate = formatDate(dateOccurred)
+
+const localMedia = await getEntry('media', id)
+
+const stripURL = (url) => {
+  const splitURL = url.split('/public')
+  // console.log(splitURL[1])
+  return splitURL[1]
+}
 ---
 <div class="report-card">
   <div class="info">
@@ -35,23 +43,22 @@ const formattedDate = formatDate(dateOccurred)
     { id && <span>{id}</span>}
   </div>
 
-
   <div class="summary">
-    <!-- { media?.length > 0 && 
+    { localMedia?.data.urls.length > 0 && 
       <div class="media">
-        { checkIsImage(media[0]) &&
+        {checkIsImage(localMedia?.data.urls[0]) && 
           <Image 
-            src={media[0]}
+            src={stripURL(localMedia?.data.urls[0])}
             alt={`Image from report ${id}`}
-            width="100"
-            height="100"
+            width="300"
+            height="400"
           />
         }
-        {checkIsVideo(media[0]) &&
-          <video src={media[0]} autoplay loop muted />
+        {checkIsVideo(localMedia?.data.urls[0]) &&
+          <video src={stripURL(localMedia?.data.urls[0])} autoplay loop muted />
         }
       </div>
-    } -->
+    }
     { summary && <p class="h6">{summary}</p>}
   </div>
 
@@ -101,23 +108,23 @@ const formattedDate = formatDate(dateOccurred)
     { id && <span class="utility">{id}</span>}
     {/* <Fragment set:html={content} /> */}
     <div class="inner-content">
-      {/* { media?.length > 0 && 
+      { media?.length > 0 && 
         <div class="media">
-          { media.map((asset) => {
-            if (checkIsImage(asset)) return (
+          { localMedia?.data.urls.map((url) => {
+            if (checkIsImage(localMedia?.data.urls[0])) return (
               <Image 
-                src={media[0]}
+                src={stripURL(url)}
                 alt={`Image from report ${id}`}
-                width="100"
-                height="100"
+                width="300"
+                height="400"
               />
             )
-            else if (checkIsVideo(asset)) return (
-              <video src={asset} controls />
+            if (checkIsVideo(localMedia?.data.urls[0])) return (
+              <video src={stripURL(url)} controls />
             )
           })}
         </div>
-      } */}
+      }
       { content && <pre><Fragment set:text={content} /></pre> }
     </div>
     <button popovertarget={`details_${id}`}>Close</button>
@@ -160,12 +167,15 @@ const formattedDate = formatDate(dateOccurred)
       .media {
         flex: 0 0 4rem;
         min-width: 0;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        aspect-ratio: 3 / 4;
 
         img,
         video {
           width: 100%;
           min-width: 0;
-          aspect-ratio: 1 / 1;
+          aspect-ratio: 3 / 4;
           height: auto;
           object-fit: cover;
         }
