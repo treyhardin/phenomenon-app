@@ -141,12 +141,12 @@ if (mediaEntry) media = mediaEntry.data.assets
 }
 
 <script define:vars={{ id }}>
-  const modal = document.querySelector(`details_${id}`)
+  const modal = document.getElementById(`details_${id}`)
   if (modal) {
-    const videos = document.querySelectorAll('video')
+    const videos = document.getElementsByTagName('video')
     if (videos) {
-      modal.addEventListener("close", (e) => {
-        videos.forEach(video => {
+      modal.addEventListener("toggle", (e) => {
+        Array.from(videos).forEach(video => {
           video.pause()
           video.currentTime = 0
         });
