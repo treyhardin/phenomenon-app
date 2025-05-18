@@ -1,5 +1,7 @@
 import { defineCollection, z } from 'astro:content';
 import { supabase } from './lib/supabase';
+import { ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { getMimeTypeForKey, getSignedMediaUrl, S3 } from './lib/r2-queries';
 
 const countries = defineCollection({
   loader: async () => {
@@ -59,20 +61,49 @@ const shapes = defineCollection({
 const media = defineCollection({
   loader: async () => {
 
-    const entries = {}
+    const result = {};
+    let continuationToken = undefined;
+  
+    
+    do {
+      const command = new ListObjectsV2Command({
+        Bucket: import.meta.env.CLOUDFLARE_BUCKET,
+        ContinuationToken: continuationToken,
+      });
+  
+      const response = await S3.send(command);
+      continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+  
+      // console.log(response.Contents)
+      const batch = await Promise.all(
+        (response.Contents || [])
+          .filter((object) => object.Key.includes('/'))
+          .map(async (object) => {
+            const key = object.Key;
+            const [directory] = key.split('/');
 
-    const mediaById = import.meta.glob('/public/media/*/*', { eager: true, as: 'url' })
+            const [url, type] = await Promise.all([
+              getSignedMediaUrl(key, 600),
+              getMimeTypeForKey(key)
+            ]);
 
-    // console.log(mediaById)
-    for (const path in mediaById) {
-      const [, , , id] = path.split('/') // ['', 'public', 'media', 'MUFON_142298', 'file.jpg']
-      if (!entries[id]) entries[id] = []
-      entries[id].push(mediaById[path])
-    }
+            return { directory, asset: { url, type } };
+          })
+      );
 
-    return Object.entries(entries).map(([id, urls]) => ({
-      id, urls
-    }))
+      // Group assets by directory
+      for (const { directory, asset } of batch) {
+        if (!result[directory]) result[directory] = [];
+        result[directory].push(asset);
+      }
+    } while (continuationToken);
+  
+    return Object.keys(result).map((record) => {
+      return {
+        id: record,
+        assets: result[record]
+      }
+    })
 
   }
 })

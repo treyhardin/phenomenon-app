@@ -26,16 +26,20 @@ import { checkIsImage, checkIsVideo } from "../lib/utils"
 import { Image } from "astro:assets"
 import { getEntry } from "astro:content"
 
-const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content, media } = Astro.props
+const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content } = Astro.props
 const formattedDate = formatDate(dateOccurred)
 
-const localMedia = await getEntry('media', id)
+// const localMedia = await getEntry('media', id)
 
-const stripURL = (url) => {
-  const splitURL = url.split('/public')
-  // console.log(splitURL[1])
-  return splitURL[1]
-}
+// const stripURL = (url) => {
+//   const splitURL = url.split('/public')
+//   // console.log(splitURL[1])
+//   return splitURL[1]
+// }
+let media
+const mediaEntry = await getEntry('media', id)
+if (mediaEntry) media = mediaEntry.data.assets
+// console.log(media)
 ---
 <div class="report-card">
   <div class="info">
@@ -44,18 +48,20 @@ const stripURL = (url) => {
   </div>
 
   <div class="summary">
-    { localMedia?.data.urls.length > 0 && 
+    { media && 
       <div class="media">
-        {checkIsImage(localMedia?.data.urls[0]) && 
+        {media[0].type.includes('image') && 
           <Image 
-            src={stripURL(localMedia?.data.urls[0])}
+            src={media[0].url}
             alt={`Image from report ${id}`}
             width="300"
             height="400"
           />
         }
-        {checkIsVideo(localMedia?.data.urls[0]) &&
-          <video src={stripURL(localMedia?.data.urls[0])} autoplay loop muted />
+        {media[0].type.includes('video') &&
+          <video autoplay loop muted >
+            <source src={media[0].url} type={media[0].type}>
+          </video>
         }
       </div>
     }
@@ -110,17 +116,19 @@ const stripURL = (url) => {
     <div class="inner-content">
       { media?.length > 0 && 
         <div class="media">
-          { localMedia?.data.urls.map((url) => {
-            if (checkIsImage(localMedia?.data.urls[0])) return (
+          { media.map((asset) => {
+            if (asset.type.includes('image')) return (
               <Image 
-                src={stripURL(url)}
+                src={asset.url}
                 alt={`Image from report ${id}`}
                 width="300"
                 height="400"
               />
             )
-            if (checkIsVideo(localMedia?.data.urls[0])) return (
-              <video src={stripURL(url)} controls />
+            if (asset.type.includes('video')) return (
+              <video controls >
+                <source src={asset.url} type={asset.type}>
+              </video>
             )
           })}
         </div>
@@ -132,7 +140,20 @@ const stripURL = (url) => {
   </dialog>
 }
 
-
+<script define:vars={{ id }}>
+  const modal = document.querySelector(`details_${id}`)
+  if (modal) {
+    const videos = document.querySelectorAll('video')
+    if (videos) {
+      modal.addEventListener("close", (e) => {
+        videos.forEach(video => {
+          video.pause()
+          video.currentTime = 0
+        });
+      })
+    }
+  }
+</script>
 
 
 <style>
