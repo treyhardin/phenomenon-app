@@ -10,7 +10,7 @@ export const S3 = new S3Client({
 	},
 });
 
-export const getSignedMediaUrl = async (key, expiresIn = 3600) => {
+export const getSignedMediaUrl = async (key, expiresIn = 604800) => {
   const command = new GetObjectCommand({
     Bucket: import.meta.env.CLOUDFLARE_BUCKET,
     Key: key,
