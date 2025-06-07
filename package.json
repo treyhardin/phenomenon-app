@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "index-media": "node scripts/localize-media.js",
+    "build:index": "node scripts/localize-media.js && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },

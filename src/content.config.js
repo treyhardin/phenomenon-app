@@ -83,7 +83,7 @@ const media = defineCollection({
             const [directory] = key.split('/');
 
             const [url, type] = await Promise.all([
-              getSignedMediaUrl(key, 600),
+              `${import.meta.env.MEDIA_BASE_URL || `https://pub-${import.meta.env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
               getMimeTypeForKey(key)
             ]);
 
