@@ -5,11 +5,14 @@ import { ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { getMimeTypeForKey, getSignedMediaUrl, S3 } from './lib/r2-queries';
 import { loadEnv } from "vite";
 
-// Load wrangler.jsonc if .env doesn't exist
-if (!fs.existsSync('.env') && fs.existsSync('wrangler.jsonc')) {
-  const wranglerConfig = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'))
-  Object.assign(process.env, wranglerConfig.vars)
-}
+// Load environment variables for content collections
+const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), "");
+
+// Ensure environment variables are available
+const CLOUDFLARE_BUCKET = process.env.CLOUDFLARE_BUCKET || env.CLOUDFLARE_BUCKET;
+const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL || env.MEDIA_BASE_URL;
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || env.CLOUDFLARE_ACCOUNT_ID;
+
 
 const countries = defineCollection({
   loader: async () => {
@@ -75,7 +78,7 @@ const media = defineCollection({
     
     do {
       const command = new ListObjectsV2Command({
-        Bucket: process.env.CLOUDFLARE_BUCKET,
+        Bucket: CLOUDFLARE_BUCKET,
         ContinuationToken: continuationToken,
       });
   
@@ -91,7 +94,7 @@ const media = defineCollection({
             const [directory] = key.split('/');
 
             const [url, type] = await Promise.all([
-              `${process.env.MEDIA_BASE_URL || `https://pub-${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
+              `${MEDIA_BASE_URL || `https://pub-${CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
               getMimeTypeForKey(key)
             ]);
 
