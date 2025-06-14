@@ -1,17 +1,9 @@
 import fs from 'fs';
 import 'dotenv/config';
-
-// Load wrangler.jsonc if .env doesn't exist
-if (!fs.existsSync('.env') && fs.existsSync('wrangler.jsonc')) {
-  const wranglerConfig = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'))
-  Object.assign(process.env, wranglerConfig.vars)
-}
 import { createClient } from '@supabase/supabase-js';
 import flexsearch from 'flexsearch';
 const { Document } = flexsearch
 import { removeStopwords } from 'stopword'
-
-import 'dotenv/config'
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
