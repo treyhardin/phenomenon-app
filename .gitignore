@@ -12,8 +12,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-wrangler.jsonc
-
 
 # environment variables
 .env
