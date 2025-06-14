@@ -21,9 +21,5 @@ export default defineConfig({
   },
 
   integrations: [solidJs()],
-  adapter: cloudflare({
-    platformProxy: {
-      enabled: true,
-    }
-  })
+  adapter: cloudflare()
 });
