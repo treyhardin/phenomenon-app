@@ -1,10 +1,15 @@
 import { defineCollection, z } from 'astro:content';
+import fs from 'fs';
 import { supabase } from './lib/supabase';
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { getMimeTypeForKey, getSignedMediaUrl, S3 } from './lib/r2-queries';
 import { loadEnv } from "vite";
 
-const env = loadEnv(process.env.NODE_ENV, process.cwd(), '')
+// Load wrangler.jsonc if .env doesn't exist
+if (!fs.existsSync('.env') && fs.existsSync('wrangler.jsonc')) {
+  const wranglerConfig = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'))
+  Object.assign(process.env, wranglerConfig.vars)
+}
 
 const countries = defineCollection({
   loader: async () => {
@@ -70,7 +75,7 @@ const media = defineCollection({
     
     do {
       const command = new ListObjectsV2Command({
-        Bucket: env.CLOUDFLARE_BUCKET,
+        Bucket: process.env.CLOUDFLARE_BUCKET,
         ContinuationToken: continuationToken,
       });
   
@@ -86,7 +91,7 @@ const media = defineCollection({
             const [directory] = key.split('/');
 
             const [url, type] = await Promise.all([
-              `${env.MEDIA_BASE_URL || `https://pub-${env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
+              `${process.env.MEDIA_BASE_URL || `https://pub-${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
               getMimeTypeForKey(key)
             ]);
 

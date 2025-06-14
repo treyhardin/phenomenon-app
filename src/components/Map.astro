@@ -85,6 +85,7 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
 <script>
   import type { Feature, FeatureCollection, GeoJsonObject } from 'geojson';
   import mapboxgl, { LngLat, Map, Marker } from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+  const { env } = Astro.locals.runtime;
 
   async function getData() {
     const url = "/api/getLocations";
@@ -159,7 +160,7 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
   let latitude: string | undefined
   let zoomLevel: number | undefined
 
-  mapboxgl.accessToken = import.meta.env.PUBLIC_MAPBOX_TOKEN;
+  mapboxgl.accessToken = env.PUBLIC_MAPBOX_TOKEN;
 
   const updateMapData = () => {
     const mapData = document.getElementById("map-data")

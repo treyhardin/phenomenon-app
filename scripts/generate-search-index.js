@@ -1,8 +1,15 @@
 import fs from 'fs';
 import 'dotenv/config';
+
+// Load wrangler.jsonc if .env doesn't exist
+if (!fs.existsSync('.env') && fs.existsSync('wrangler.jsonc')) {
+  const wranglerConfig = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'))
+  Object.assign(process.env, wranglerConfig.vars)
+}
 import { createClient } from '@supabase/supabase-js';
 import flexsearch from 'flexsearch';
 const { Document } = flexsearch
+import { removeStopwords } from 'stopword'
 
 import 'dotenv/config'
 
@@ -38,21 +45,21 @@ const generateSearchIndex = async () => {
   // Create simple search data - just essential info for lightweight client-side search
   const searchData = reports.map(report => ({
     id: report.id,
-    summary: (report.summary || ''),
+    summary: (report.summary ? removeStopwords(report.summary.split(' ')).join(' ') : ''),
     city: report.canonical_city || '',
     state: report.canonical_state || '',
     country: report.canonical_country || '',
     shape: report.shape || '',
     dateOccurred: report.dateOccurred,
-    content: (report.content || ''),
+    content: (report.content ? removeStopwords(report.content.split(' ')).join(' ') : ''),
     // Create searchable text combining all fields
     searchText: [
-      (report.summary || ''),
+      (report.summary ? removeStopwords(report.summary.split(' ')).join(' ') : ''),
       report.canonical_city || '',
       report.canonical_state || '',
       report.canonical_country || '',
       report.shape || '',
-      (report.content || '').slice(0, 300)
+      (report.content ? removeStopwords(report.content.slice(0, 300).split(' ')).join(' ') : '')
     ].join(' ').toLowerCase()
   }));
 
