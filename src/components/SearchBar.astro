@@ -1,0 +1,49 @@
+---
+import IconSearch from "../icons/search.svg"
+import Search from "./search/Search.jsx"
+---
+<button 
+  class="search-bar"
+  popovertarget="search-menu"
+  data-style="secondary" 
+>
+  <IconSearch class="search-icon" />
+  <span class="search-label">Search</span>
+  <span id="shortcut-hint" class="shortcut-hint">⌘ + E</span>
+</button>
+
+<Search client:only="solid-js" />
+
+<style>
+  .search-bar {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: center;
+    gap: var(--space-3xs);
+    padding: var(--space-3xs) var(--space-3xs) var(--space-3xs) var(--space-2xs);
+
+    .search-icon {
+      width: var(--icon-sm);
+      height: auto;
+    }
+  }
+
+  .search-label {
+    text-align: left;
+    flex-grow: 1;
+  }
+
+  .shortcut-hint {
+    color: var(--color-foreground-secondary);
+    font-size: var(--text-xs);
+    margin-top: var(--space-xs);
+    text-align: center;
+    border: 1px solid var(--color-neutral);
+    border-radius: var(--radius-sm);
+    margin: 0;
+    padding: var(--space-3xs) var(--space-2xs);
+  }
+  
+</style>

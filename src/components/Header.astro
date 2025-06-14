@@ -1,18 +1,15 @@
 ---
 import Globe from '../icons/globe.svg'
 import Pin from '../icons/pin.svg'
+import SearchBar from './SearchBar.astro'
 // import Shape from '../icons/shape.svg'
 
 const { activePath } = Astro.props
 ---
 <header>
   <a href="/" class="logo utility">The Phenomenon</a>
-  <!-- <div class="search-bar">
-    <input 
-      type="search" 
-      placeholder="Search"
-    /> -->
-  </div>
+  
+  <SearchBar />
   <!-- <nav>
     <a 
       href="/" 
@@ -48,7 +45,9 @@ const { activePath } = Astro.props
 
     .logo {
       text-align: center;
-      padding-block: var(--space-2xs);
+      padding-block: var(--space-3xs);
+      padding-inline: var(--space-3xs);
+      border-radius: var(--radius-sm);
     }
 
     nav {
@@ -94,12 +93,5 @@ const { activePath } = Astro.props
       }
     }
 
-    .search-bar {
-      align-self: stretch;
-
-      input[type="search"] {
-        width: 100%;
-      }
-    }
   }
 </style>

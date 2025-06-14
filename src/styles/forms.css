@@ -24,6 +24,12 @@ input[type="search"] {
     color: var(--color-neutral);
 } */
 
+a {
+    &:focus-visible {
+        outline: 1px solid var(--color-accent-01);
+    }
+}
+
 button {
     border: none;
     font: inherit;
@@ -37,10 +43,19 @@ button {
     &:hover {
         background-color: var(--color-accent-01);
     }
+    
+    &:focus-visible {
+        outline: 1px solid var(--color-accent-01);
+    }
 }
 
 button[data-style="secondary"] {
     background-color: transparent;
     color: var(--color-foreground);
     border: 1px solid var(--color-neutral);
+
+    &:hover {
+        /* border-color: var(--color-foreground); */
+        background-color: var(--color-background-secondary);
+    }
 }
