@@ -13,6 +13,12 @@ const CLOUDFLARE_BUCKET = process.env.CLOUDFLARE_BUCKET || env.CLOUDFLARE_BUCKET
 const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL || env.MEDIA_BASE_URL;
 const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || env.CLOUDFLARE_ACCOUNT_ID;
 
+// Debug environment variables
+console.log('Content config environment check:');
+console.log('CLOUDFLARE_BUCKET:', CLOUDFLARE_BUCKET);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('CF_PAGES:', process.env.CF_PAGES);
+
 
 const countries = defineCollection({
   loader: async () => {
@@ -71,6 +77,11 @@ const shapes = defineCollection({
 
 const media = defineCollection({
   loader: async () => {
+    // Skip media collection if environment variables aren't available
+    if (!CLOUDFLARE_BUCKET) {
+      console.log('⚠️  Skipping media collection - CLOUDFLARE_BUCKET not available');
+      return [];
+    }
 
     const result = {};
     let continuationToken = undefined;
