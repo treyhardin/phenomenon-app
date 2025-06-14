@@ -1,0 +1,37 @@
+* {
+  box-sizing: border-box;
+  /* Browser Resets */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  min-width: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+svg {
+  width: 100%;
+}
+

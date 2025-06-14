@@ -1,0 +1,62 @@
+:root {
+
+  /* Color: Primitives */
+  --black: #0C0C0C;
+  --grey-800: #1C1C1C;
+  --grey-600: #2a2a2a;
+  --grey-400: #737373;
+  --grey-200: #A6A59D;
+  --grey-100: #D1CFBE;
+  --white: #EDECDE;
+  --blue: #426ED4;
+  --green: #16B14C;
+
+  /* Color: Tokens */
+  --color-background: var(--black);
+  --color-background-secondary: var(--grey-800);
+  --color-background-tertiary: var(--grey-600);
+  --color-foreground: var(--white);
+  --color-foreground-secondary: var(--grey-400);
+  /* --color-foreground-secondary: red; */
+  --color-neutral: var(--grey-600);
+
+  --color-accent-01: var(--green);
+
+  --background-blur-color: color-mix(in srgb, var(--color-background) 40%, transparent);
+  --background-blur: blur(10px);
+
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+
+    --background-blur-color: color-mix(in srgb, var(--color-background) 50%, transparent);
+    --color-background: var(--white);
+    --color-background-secondary: var(--grey-100);
+    --color-background-tertiary: var(--grey-200);
+    --color-foreground: var(--black);
+    --color-foreground-secondary: var(--grey-800);
+
+    --color-accent-01: var(--green);
+    --color-accent-02: var(--blue);
+  }
+}
+
+html {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+
+  [data-color-scheme="inverse"] {
+
+    --background-blur-color: color-mix(in srgb, var(--color-background) 50%, transparent);
+    --color-background: var(--white);
+    --color-background-secondary: var(--grey-200);
+    --color-foreground: var(--black);
+    --color-foreground-secondary: var(--grey-800);
+
+    --color-accent-01: var(--green);
+    --color-accent-02: var(--blue);
+
+    color: var(--color-foreground);
+  }
+}

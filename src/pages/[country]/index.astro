@@ -1,0 +1,81 @@
+---
+import { getCollection, getEntry } from 'astro:content'
+import { supabase } from '../../lib/supabase'
+import LayoutApp from '../../layouts/layoutApp.astro'
+import MapNavigation from '../../components/MapNavigation.astro'
+import Map from '../../components/Map.astro'
+
+export async function getStaticPaths() {
+  const countries = await getCollection('countries')
+  return countries?.map((country) => {
+    return { 
+      params: { 
+        country: country.data.id 
+      }, 
+      props: { 
+        ...country.data 
+      } 
+    }
+  })
+}
+
+const { id, canonical_name, record_count, longitude, latitude } = Astro.props
+const { country } = Astro.params
+
+const getStates = async () => {
+  
+  let { data: states, error } = await supabase
+    .from('Lookup State')
+    .select('*')
+    .eq('country', country)
+    .order('record_count', { ascending: false })
+
+  return states?.map((state) => ({
+    title: state.canonical_name,
+    url: `/${country}/${state.id}`,
+    count: state.record_count
+  }))
+}
+
+const getReports = async () => {
+  const { data: reports, error } = await supabase
+    .from('clean_data_mv')
+    .select()
+    .eq('canonical_country', id)
+    .not('dateOccurred', 'is', null)
+    .order('dateOccurred', {ascending: false})
+    .limit(100)
+  return reports
+}
+
+
+const states = await getStates()
+const reports = await getReports()
+// console.log(reports)
+---
+<LayoutApp
+  title={canonical_name}
+  reports={reports}
+  activePath="map"
+>
+  <MapNavigation 
+    slot="sidebar"
+    activeLocation={canonical_name}
+    reports={reports}
+    locations={states}
+    breadcrumbs={[
+      {
+        label: "All Countries",
+        url: "/"
+      }
+    ]}
+    menuTitle={`${canonical_name}`}
+    defaultOpenMobile={true}
+  />
+  <Map 
+    slot="main"
+    longitude={longitude}
+    latitude={latitude}
+    zoomLevel={1}
+  />
+</LayoutApp>

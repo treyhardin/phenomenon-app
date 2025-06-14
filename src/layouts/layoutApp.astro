@@ -1,0 +1,73 @@
+---
+import ReportList from "../components/ReportList.astro";
+import Sidebar from "../components/Sidebar.astro";
+import LayoutMaster from "./layoutMaster.astro";
+import Map from "../components/Map.astro"
+
+interface Props {
+  title: string;
+  reports?: ReportCard[] | null;
+  activePath: string;
+}
+
+const { title, reports, activePath } = Astro.props
+// console.log(reports)
+---
+<LayoutMaster
+  title={title}
+>
+  <div class="content">
+    <Sidebar 
+      reports={reports}
+      activePath={activePath}
+    >
+      <slot name="sidebar" />
+    </Sidebar>
+    <slot name="main" />
+    <!-- <Map 
+    /> -->
+  </div>
+</LayoutMaster>
+
+<style>
+
+  .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    flex: 0 1 100%;
+    min-height: 100%;
+    position: relative;
+    overflow: clip;
+    width: 100%;
+  }
+
+  main {
+    /* background-color: var(--color-background-secondary); */
+    flex: 0 1 100%;
+    padding-inline: var(--page-margin);
+    padding-block: 0 var(--page-margin);
+  }
+
+  aside {
+    flex: 0 0 max(20%, 14rem);
+    overflow-y: auto;
+    padding-inline: var(--page-margin);
+    padding-block: 0 var(--page-margin);
+    position: relative;
+
+    /* &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 10vh;
+      background-color: red;
+      z-index: 9;
+    } */
+  }
+
+
+</style>

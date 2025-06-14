@@ -1,0 +1,114 @@
+---
+import { getCollection } from 'astro:content'
+import LayoutApp from '../layouts/layoutApp.astro'
+import { supabase } from '../lib/supabase'
+import Map from '../components/Map.astro'
+import MapNavigation from '../components/MapNavigation.astro'
+import { GetObjectCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { HeadObjectCommand } from '@aws-sdk/client-s3';
+import { S3, getSignedMediaUrl, getMimeTypeForKey } from '../lib/r2-queries';
+import { getEntry } from 'astro:content'
+
+
+// Use the expiresIn property to determine how long the presigned link is valid.
+// console.log(
+//   await getSignedUrl(
+//     S3,
+//     new GetObjectCommand({ Bucket: "my-bucket-name", Key: "dog.png" }),
+//     { expiresIn: 3600 },
+//   ),
+// );
+// https://my-bucket-name.<accountid>.r2.cloudflarestorage.com/dog.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential<credential>&X-Amz-Date=<timestamp>&X-Amz-Expires=3600&X-Amz-Signature=<signature>&X-Amz-SignedHeaders=host&x-id=GetObject
+
+// You can also create links for operations such as putObject to allow temporary write access to a specific key.
+// console.log(
+//   await getSignedUrl(
+//     S3,
+//     new PutObjectCommand({ Bucket: "my-bucket-name", Key: "dog.png" }),
+//     { expiresIn: 3600 },
+//   ),
+// );
+
+const getCountries = async () => {
+	const countries = await getCollection('countries')
+	return countries.map((country) => ({
+		title: country.data.canonical_name,
+		url: `/${country.data.id}`,
+		count: country.data.record_count.toLocaleString()
+	}))
+}
+
+const getReports = async () => {
+	const { data: reports, error } = await supabase
+		.from('clean_data_mv')
+		.select()
+		.not('dateOccurred', 'is', null)
+		.order('dateOccurred', {ascending: false})
+		.limit(40)
+	return reports
+}
+
+// const mediaById = await import.meta.glob('/public/media/*/*', { eager: true, as: 'url' })
+// console.log(mediaById)
+
+const reports = await getReports()
+const countries = await getCountries()
+
+// const getMediaIndex = async () => {
+//   const result = {};
+//   let continuationToken = undefined;
+
+//   do {
+//     const command = new ListObjectsV2Command({
+//       Bucket: import.meta.env.CLOUDFLARE_BUCKET,
+//       ContinuationToken: continuationToken,
+//     });
+
+//     const response = await S3.send(command);
+//     continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+
+// 		// console.log(response.Contents)
+
+//     for (const object of response.Contents || []) {
+//       const key = object.Key; // e.g., "MUFON_142298/IMG_5040.mov"
+//       if (!key.includes('/')) continue;
+
+//       const [directory, filename] = key.split('/');
+//       if (!result[directory]) result[directory] = [];
+
+//       result[directory].push({
+//         url: await getSignedMediaUrl(key, 600),
+// 				type: await getMimeTypeForKey(key)
+// 			});
+//     }
+//   } while (continuationToken);
+
+//   return result.map((entry) => {
+// 		return entry.key
+// 	});
+// }
+
+// const test = await getMediaIndex()
+// console.log(test)
+
+
+// console.log(contentCollection)
+
+// console.log(reports)
+---
+<LayoutApp
+	title='UAP Database'
+  reports={reports}
+  activePath="map"
+>
+  <MapNavigation 
+    slot="sidebar"
+    reports={reports}
+    locations={countries}
+  />
+  <Map 
+    slot="main"
+		zoomLevel={0}
+  />
+</LayoutApp>

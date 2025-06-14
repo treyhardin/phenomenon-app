@@ -1,0 +1,32 @@
+---
+import { getCollection } from "astro:content"
+import LayoutApp from "../../layouts/layoutApp.astro"
+import ShapesList from "../../components/ShapesList.astro"
+import ReportList from "../../components/ReportList.astro"
+import { supabase } from "../../lib/supabase"
+import ShapeReports from "../../components/ShapeReports.astro"
+
+const getReports = async () => {
+	const { data: reports, error } = await supabase
+		.from('clean_data_mv')
+		.select()
+		.not('shape', 'is', null)
+		.not('dateOccurred', 'is', null)
+		.order('dateOccurred', {ascending: false})
+		.limit(100)
+	return reports
+}
+
+const reports = await getReports()
+---
+<LayoutApp 
+  title="UAP Shapes"
+  activePath="shapes"
+>
+  <ShapesList slot="sidebar" />
+  <ShapeReports 
+    slot="main"
+    reports={reports}
+  />
+</LayoutApp>
+

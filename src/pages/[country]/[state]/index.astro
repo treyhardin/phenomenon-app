@@ -1,0 +1,102 @@
+---
+import { getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import { supabase } from '../../../lib/supabase';
+import LayoutApp from '../../../layouts/layoutApp.astro';
+import MapNavigation from '../../../components/MapNavigation.astro';
+import Map from '../../../components/Map.astro';
+import { getCities } from '../../../lib/db-queries';
+
+export async function getStaticPaths() {
+  const states = await getCollection('states')
+  const paths = states.map((state) => ({
+    params: {
+      country: state.data.country,
+      state: state.id
+    },
+    props: {
+      stateName: state.data.canonical_name,
+      recordCount: state.data.record_count,
+      latitude: state.data.latitude,
+      longitude: state.data.longitude
+    }
+  }))
+  return paths.filter(Boolean) // Remove any null entries
+}
+
+const { stateName, recordCount, latitude, longitude } = Astro.props
+const { country, state } = Astro.params
+// console.log(cities)
+
+const countryData = await getEntry('countries', country)
+
+// const getCities = async () => {
+//   let { data: cities, error } = await supabase
+//     .from('Lookup City')
+//     .select('*')
+//     .eq('state', state)
+//     .order('record_count', { ascending: false })
+
+//   return cities?.map((city) => ({
+//     title: city.canonical_name,
+//     url: `/${countryData?.data.id}/${state}/${city.id}`,
+//     count: city.record_count
+//   }))
+// }
+
+const getReports = async () => {
+  let { data: reports, error } = await supabase
+    .from('clean_data_mv')
+    .select('*')
+    .eq('canonical_state', state)
+    .not('dateOccurred', 'is', null)
+    .order('dateOccurred', {ascending: false})
+    .limit(100)
+  return reports
+}
+
+const cities = await getCities(countryData?.data.id, state)
+const reports = await getReports()
+---
+<LayoutApp
+  title={`${stateName}, ${countryData?.data.canonical_name}`}
+  reports={reports}
+  activePath="map"
+>
+  <MapNavigation 
+    slot="sidebar"
+    activeLocation={`${stateName}, ${countryData?.data.canonical_name}`}
+    reports={reports}
+    locations={cities}
+    breadcrumbs={[
+      {
+        label: 'All Countries',
+        url: `/`
+      },
+      {
+        label: countryData?.data.canonical_name,
+        url: `/${country}`
+      }
+    ]}
+    menuTitle={stateName}
+    defaultOpenMobile={true}
+  />
+  <Map 
+    slot="main"
+    zoom={5}
+    longitude={longitude}
+    latitude={latitude}
+    zoomLevel={2}
+  />
+  <!-- <LocationList
+    breadcrumbs={[
+      {
+        label: countryData?.data.canonical_name,
+        url: `/${country}`
+      }
+    ]}
+    categoryTitle={stateName}
+    categoryCount={recordCount}
+    locations={cities}
+  /> -->
+</LayoutApp>

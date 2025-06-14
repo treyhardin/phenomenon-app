@@ -1,0 +1,61 @@
+---
+import ReportCard from './ReportCard.astro';
+
+interface Props {
+    reports?: ReportCard[] | null;
+}
+
+const { reports } = Astro.props
+---
+{reports &&
+    <div class="report-list">
+        {/* <h2 class="utility-small">Latest UAP Reports</h2> */}
+        <div class="reports">
+            {reports.map((report) => (
+                <ReportCard
+                    id={report.id}
+                    summary={report.summary}
+                    city={report.city}
+                    state={report.state}
+                    country={report.country}
+                    shape={report.shape}
+                    dateOccurred={report.dateOccurred}
+                    dateReported={report.dateReported}
+                    content={report.content}
+                    media={report.media}
+                />
+            ))}
+        </div>
+    </div>
+}
+
+<style is:global>
+    @media screen and (width <= 768px) {
+        .map-navigation[data-menu-open="true"] .report-list {
+            /* rotate: 20deg; */
+            max-height: 70dvh;
+        }
+    }
+</style>
+
+<style>
+    .report-list {
+        /* background-color: var(--color-background-secondary); */
+        border-radius: var(--radius-sm);
+        overflow-y: auto;
+        max-height: 100%;
+        overflow-y: auto;
+        flex: 0 1 100%;
+        /* max-height: 20px; */
+        transition: max-height var(--anim-sm) allow-discrete;
+        /* padding-inline: var(--page-margin);
+        padding-block: var(--space-xs); */
+        /* max-width: 40rem; */
+    }
+
+    @media screen and (width <= 768px) {
+        .report-list {
+            max-height: 0;
+        }
+    }
+</style>

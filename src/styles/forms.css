@@ -1,0 +1,61 @@
+:root {
+    --input-padding: 0.8em 1em;
+}
+
+input {
+    border: none;
+}
+
+input[type="search"] {
+    background-color: var(--color-background-tertiary);
+    color: var(--color-foreground);
+    font: inherit;
+    width: auto;
+    max-width: unset;
+    border-radius: var(--radius-sm);
+    padding: var(--input-padding);
+
+    &::placeholder {
+        color: var(--color-foreground-secondary);
+    }
+}
+
+/* input::placeholder {
+    color: var(--color-neutral);
+} */
+
+a {
+    &:focus-visible {
+        outline: 1px solid var(--color-accent-01);
+    }
+}
+
+button {
+    border: none;
+    font: inherit;
+    padding: var(--input-padding);
+    border-radius: var(--radius-sm);
+    transition: var(--anim-sm);
+    cursor: pointer;
+    color: var(--color-background);
+    background-color: var(--color-foreground);
+
+    &:hover {
+        background-color: var(--color-accent-01);
+    }
+    
+    &:focus-visible {
+        outline: 1px solid var(--color-accent-01);
+    }
+}
+
+button[data-style="secondary"] {
+    background-color: transparent;
+    color: var(--color-foreground);
+    border: 1px solid var(--color-neutral);
+
+    &:hover {
+        /* border-color: var(--color-foreground); */
+        background-color: var(--color-background-secondary);
+    }
+}
