@@ -11,6 +11,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.5.4",
     "@astrojs/solid-js": "^5.1.0",
     "@aws-sdk/client-s3": "^3.812.0",
     "@aws-sdk/s3-request-presigner": "^3.812.0",
