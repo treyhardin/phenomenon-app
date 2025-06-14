@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && npx pagefind",
+    "build": "node scripts/generate-search-index.js && astro build",
     "index-media": "node scripts/localize-media.js",
     "build:index": "node scripts/localize-media.js && astro build",
     "preview": "astro preview",

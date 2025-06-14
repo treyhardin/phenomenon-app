@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import flexsearch from 'flexsearch';
 const { Document } = flexsearch
 
+import 'dotenv/config'
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_PUBLIC_ANON_KEY
