@@ -165,19 +165,32 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
     const mapData = document.getElementById("map-data")
     longitude = mapData?.dataset.longitude
     latitude = mapData?.dataset.latitude
-    zoomLevel = mapData?.dataset.zoomLevel ? parseFloat(mapData.dataset.zoomLevel) : DEFAULT_ZOOM
+    
+    // Safely parse zoomLevel with bounds checking
+    const parsedZoomLevel = mapData?.dataset.zoomLevel ? parseFloat(mapData.dataset.zoomLevel) : 0
+    zoomLevel = isNaN(parsedZoomLevel) || parsedZoomLevel < 0 || parsedZoomLevel >= ZOOM_LEVELS.length 
+      ? 0 
+      : Math.floor(parsedZoomLevel)
 
-    console.log(zoomLevel)
+    console.log('Zoom level:', zoomLevel, 'Zoom value:', ZOOM_LEVELS[zoomLevel])
   }
 
   const loadMap = (countryData: FeatureCollection, stateData: FeatureCollection, cityData: FeatureCollection) => {
 
 
+    // Safely parse coordinates
+    const parsedLng = longitude ? parseFloat(longitude) : DEFAULT_COORDS.lng
+    const parsedLat = latitude ? parseFloat(latitude) : DEFAULT_COORDS.lat
+    
+    // Validate coordinates
+    const validLng = !isNaN(parsedLng) && parsedLng >= -180 && parsedLng <= 180 ? parsedLng : DEFAULT_COORDS.lng
+    const validLat = !isNaN(parsedLat) && parsedLat >= -90 && parsedLat <= 90 ? parsedLat : DEFAULT_COORDS.lat
+    
     map = new mapboxgl.Map({
       container: 'map', // container ID
       style: 'mapbox://styles/trumancreative/cm6ihkvlu006h01rychf1hm9g?optimize=true', // style URL
-      center: longitude && latitude ? new LngLat(parseFloat(longitude), parseFloat(latitude)) : DEFAULT_COORDS, // starting position [lng, lat]
-      zoom: ZOOM_LEVELS[zoomLevel] // starting zoom
+      center: new LngLat(validLng, validLat), // starting position [lng, lat]
+      zoom: ZOOM_LEVELS[zoomLevel] || DEFAULT_ZOOM // starting zoom with fallback
     });
 
     // console.log(map.getZoom())
@@ -307,14 +320,24 @@ const { longitude, latitude, zoom, zoomLevel } = Astro.props
     let targetCoords = DEFAULT_COORDS
     // let targetZoom = DEFAULT_ZOOM
 
-    if (latitude && longitude) targetCoords = new LngLat(parseFloat(longitude), parseFloat(latitude))
+    // Safely parse and validate target coordinates
+    if (latitude && longitude) {
+      const parsedLng = parseFloat(longitude)
+      const parsedLat = parseFloat(latitude)
+      
+      if (!isNaN(parsedLng) && !isNaN(parsedLat) && 
+          parsedLng >= -180 && parsedLng <= 180 && 
+          parsedLat >= -90 && parsedLat <= 90) {
+        targetCoords = new LngLat(parsedLng, parsedLat)
+      }
+    }
     // if (zoom) targetZoom = parseFloat(zoom)
 
 
     if (map) {
       map.flyTo({
         center: targetCoords,
-        zoom: ZOOM_LEVELS[zoomLevel],
+        zoom: ZOOM_LEVELS[zoomLevel] || DEFAULT_ZOOM,
         essential: true // optional; respects user motion settings
       });
     } else {

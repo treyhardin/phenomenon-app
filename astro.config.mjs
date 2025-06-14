@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 
+import solidJs from '@astrojs/solid-js';
+
 // https://astro.build/config
 export default defineConfig({
   image: {
@@ -14,5 +16,7 @@ export default defineConfig({
         hostname: 'nuforc.org',
       }
     ],
-  }
+  },
+
+  integrations: [solidJs()]
 });
