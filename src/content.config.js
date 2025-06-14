@@ -2,6 +2,7 @@ import { defineCollection, z } from 'astro:content';
 import { supabase } from './lib/supabase';
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { getMimeTypeForKey, getSignedMediaUrl, S3 } from './lib/r2-queries';
+const { env } = Astro.locals.runtime;
 
 const countries = defineCollection({
   loader: async () => {
@@ -67,7 +68,7 @@ const media = defineCollection({
     
     do {
       const command = new ListObjectsV2Command({
-        Bucket: import.meta.env.CLOUDFLARE_BUCKET,
+        Bucket: env.CLOUDFLARE_BUCKET,
         ContinuationToken: continuationToken,
       });
   
@@ -83,7 +84,7 @@ const media = defineCollection({
             const [directory] = key.split('/');
 
             const [url, type] = await Promise.all([
-              `${import.meta.env.MEDIA_BASE_URL || `https://pub-${import.meta.env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
+              `${env.MEDIA_BASE_URL || `https://pub-${env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`}/${key}`,
               getMimeTypeForKey(key)
             ]);
 
