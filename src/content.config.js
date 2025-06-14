@@ -2,6 +2,7 @@ import { defineCollection, z } from 'astro:content';
 import { supabase } from './lib/supabase';
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { getMimeTypeForKey, getSignedMediaUrl, S3 } from './lib/r2-queries';
+import 'dotenv/config'
 
 const countries = defineCollection({
   loader: async () => {
