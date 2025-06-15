@@ -3,6 +3,7 @@ import { loadEnv } from 'vite';
 
 console.log('=== DEBUG INFO ===');
 console.log('=== ALL AVAILABLE ENV VARS ===');
+console.log("THIS SHOULD PROB WORK:::::" + process.env.CLOUDFLARE_BUCKET)
 const allKeys = Object.keys(process.env).sort();
 console.log('Total env vars:', allKeys.length);
 console.log('All keys:', allKeys);
@@ -15,7 +16,6 @@ allKeys.forEach(key => {
   }
 });
 
-console.log(process.env.CLOUDFLARE_BUCKET)
 
 // Remove import.meta.env - this won't work in Node.js
 console.log(`PLEASE WORKKKK: ${env.VITE_TEST_ENV || process.env.VITE_TEST_ENV || 'STILL UNDEFINED'}`);
