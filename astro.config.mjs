@@ -13,6 +13,7 @@ const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || env.CLOUDFLAR
 const CLOUDFLARE_ACCESS_KEY_ID = process.env.CLOUDFLARE_ACCESS_KEY_ID || env.CLOUDFLARE_ACCESS_KEY_ID;
 const CLOUDFLARE_SECRET_ACCESS_KEY = process.env.CLOUDFLARE_SECRET_ACCESS_KEY || env.CLOUDFLARE_SECRET_ACCESS_KEY;
 const CLOUDFLARE_BUCKET = process.env.CLOUDFLARE_BUCKET || env.CLOUDFLARE_BUCKET;
+const CF_BUCKET = process.env.CF_BUCKET || env.CF_BUCKET;
 const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL || env.MEDIA_BASE_URL;
 
 // https://astro.build/config
@@ -38,6 +39,7 @@ export default defineConfig({
       'process.env.CLOUDFLARE_ACCESS_KEY_ID': JSON.stringify(CLOUDFLARE_ACCESS_KEY_ID),
       'process.env.CLOUDFLARE_SECRET_ACCESS_KEY': JSON.stringify(CLOUDFLARE_SECRET_ACCESS_KEY),
       'process.env.CLOUDFLARE_BUCKET': JSON.stringify(CLOUDFLARE_BUCKET),
+      'process.env.CF_BUCKET': JSON.stringify(CF_BUCKET),
       'process.env.MEDIA_BASE_URL': JSON.stringify(MEDIA_BASE_URL),
     }
   },
