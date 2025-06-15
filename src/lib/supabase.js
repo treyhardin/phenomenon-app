@@ -1,24 +1,37 @@
 import { createClient } from '@supabase/supabase-js'
 import { loadEnv } from 'vite';
 
-console.log('=== DEBUG INFO ===');
-console.log('=== ALL AVAILABLE ENV VARS ===');
-console.log("THIS SHOULD PROB WORK:::::" + process.env.CLOUDFLARE_BUCKET)
-const allKeys = Object.keys(process.env).sort();
-console.log('Total env vars:', allKeys.length);
-console.log('All keys:', allKeys);
+console.log('=== DETAILED DEBUG ===');
 
-// Look for your specific variable with different naming
-console.log('Looking for TEST_ENV variations:');
-allKeys.forEach(key => {
-  if (key.toLowerCase().includes('test')) {
-    console.log(`${key}: ${process.env[key]}`);
+// Test different ways of accessing the same variable
+const bucket = process.env.CLOUDFLARE_BUCKET;
+const bucket2 = process.env['CLOUDFLARE_BUCKET'];
+
+console.log('Direct access:', bucket);
+console.log('Bracket access:', bucket2);
+console.log('typeof bucket:', typeof bucket);
+console.log('bucket === undefined:', bucket === undefined);
+console.log('bucket === "":', bucket === '');
+console.log('bucket length:', bucket?.length);
+
+// Check if it's a descriptor issue
+const descriptor = Object.getOwnPropertyDescriptor(process.env, 'CLOUDFLARE_BUCKET');
+console.log('Property descriptor:', descriptor);
+
+// Test with different variables
+console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('CF_PAGES:', process.env.CF_PAGES);
+
+// Try iterating through all env vars to see which ones actually have values
+console.log('=== VARS WITH VALUES ===');
+Object.entries(process.env).forEach(([key, value]) => {
+  if (value && value.length > 0) {
+    console.log(`${key}: ${value.substring(0, 20)}...`); // Show first 20 chars
+  } else {
+    console.log(`${key}: [EMPTY OR UNDEFINED]`);
   }
 });
-
-
-// Remove import.meta.env - this won't work in Node.js
-console.log(`PLEASE WORKKKK: ${env.VITE_TEST_ENV || process.env.VITE_TEST_ENV || 'STILL UNDEFINED'}`);
 
 export const supabase = createClient(
   env.SUPABASE_URL, 
