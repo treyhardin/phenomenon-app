@@ -39,6 +39,11 @@ export default defineConfig({
       'process.env.CLOUDFLARE_SECRET_ACCESS_KEY': JSON.stringify(CLOUDFLARE_SECRET_ACCESS_KEY),
       'process.env.CLOUDFLARE_BUCKET': JSON.stringify(CLOUDFLARE_BUCKET),
       'process.env.MEDIA_BASE_URL': JSON.stringify(MEDIA_BASE_URL),
+    },
+    build: {
+      rollupOptions: {
+        external: ['fsevents']
+      }
     }
   },
 
