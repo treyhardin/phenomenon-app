@@ -37,6 +37,6 @@ Object.entries(process.env).forEach(([key, value]) => {
 });
 
 export const supabase = createClient(
-  env.SUPABASE_URL, 
-  env.SUPABASE_PUBLIC_ANON_KEY
+  process.env.SUPABASE_URL, 
+  process.env.SUPABASE_PUBLIC_ANON_KEY
 )
