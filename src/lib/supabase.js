@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { loadEnv } from 'vite';
+import 'dotenv/config';
 
 console.log('=== DETAILED DEBUG ===');
 
