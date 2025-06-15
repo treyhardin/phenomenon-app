@@ -3,22 +3,11 @@ import fs from 'fs';
 import { supabase } from './lib/supabase';
 import { ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { getMimeTypeForKey, getSignedMediaUrl, S3 } from './lib/r2-queries';
-import { loadEnv } from "vite";
-
-// Load environment variables for content collections
-const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), "");
 
 // Ensure environment variables are available
-const CLOUDFLARE_BUCKET = process.env.CLOUDFLARE_BUCKET || env.CLOUDFLARE_BUCKET;
-const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL || env.MEDIA_BASE_URL;
-const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID || env.CLOUDFLARE_ACCOUNT_ID;
-
-// Debug environment variables
-console.log('Content config environment check:');
-console.log('CLOUDFLARE_BUCKET:', CLOUDFLARE_BUCKET);
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('CF_PAGES:', process.env.CF_PAGES);
-
+const CLOUDFLARE_BUCKET = process.env.CLOUDFLARE_BUCKET;
+const MEDIA_BASE_URL = process.env.MEDIA_BASE_URL;
+const CLOUDFLARE_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 
 const countries = defineCollection({
   loader: async () => {
