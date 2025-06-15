@@ -23,7 +23,7 @@ console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('CF_PAGES:', process.env.CF_PAGES);
 console.log('CLOUDFLARE_BUCKET:', process.env.CLOUDFLARE_BUCKET);
-console.log('CF_BUCKET:', process.env.CF_BUCKET);
+console.log('R2_BUCKET:', process.env.R2_BUCKET);
 
 // Try iterating through all env vars to see which ones actually have values
 console.log('=== VARS WITH VALUES ===');
