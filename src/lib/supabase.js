@@ -2,15 +2,18 @@ import { createClient } from '@supabase/supabase-js'
 import { loadEnv } from 'vite';
 
 console.log('=== DEBUG INFO ===');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('Current working directory:', process.cwd());
-console.log('All process.env keys:', Object.keys(process.env).filter(key => key.includes('VITE')));
+console.log('=== ALL AVAILABLE ENV VARS ===');
+const allKeys = Object.keys(process.env).sort();
+console.log('Total env vars:', allKeys.length);
+console.log('All keys:', allKeys);
 
-const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
-console.log('loadEnv result keys:', Object.keys(env).filter(key => key.includes('VITE')));
-console.log('loadEnv VITE_TEST_ENV:', env.VITE_TEST_ENV);
-console.log('process.env VITE_TEST_ENV:', process.env.VITE_TEST_ENV);
-
+// Look for your specific variable with different naming
+console.log('Looking for TEST_ENV variations:');
+allKeys.forEach(key => {
+  if (key.toLowerCase().includes('test')) {
+    console.log(`${key}: ${process.env[key]}`);
+  }
+});
 // Remove import.meta.env - this won't work in Node.js
 console.log(`PLEASE WORKKKK: ${env.VITE_TEST_ENV || process.env.VITE_TEST_ENV || 'STILL UNDEFINED'}`);
 
