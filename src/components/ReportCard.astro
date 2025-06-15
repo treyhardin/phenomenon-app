@@ -25,21 +25,12 @@ import Unknown from "../icons/shape_unknown.svg"
 import { checkIsImage, checkIsVideo } from "../lib/utils"
 import { Image } from "astro:assets"
 import { getEntry } from "astro:content"
+import { getMediaById } from "../lib/r2-queries"
 
 const { id, dateOccurred, city, canonical_city, canonical_state, canonical_country, state, country, summary, shape, content } = Astro.props
 const formattedDate = formatDate(dateOccurred)
 
-// const localMedia = await getEntry('media', id)
-
-// const stripURL = (url) => {
-//   const splitURL = url.split('/public')
-//   // console.log(splitURL[1])
-//   return splitURL[1]
-// }
-let media
-const mediaEntry = await getEntry('media', id)
-if (mediaEntry) media = mediaEntry.data.assets
-// console.log(media)
+const media: Array<R2Asset> = await getMediaById(id)
 ---
 <div class="report-card">
   <h3 id={`report-${id}`} class="sr-only">Report {id} - {canonical_city || city}, {canonical_state || state} - {shape} - {formattedDate}</h3>
@@ -51,7 +42,7 @@ if (mediaEntry) media = mediaEntry.data.assets
   <div class="summary">
     { media && 
       <div class="media">
-        {media[0].type.includes('image') && 
+        {media[0]?.mimeType.includes('image') && 
           <Image 
             src={media[0].url}
             alt={`Image from report ${id}`}
@@ -59,9 +50,9 @@ if (mediaEntry) media = mediaEntry.data.assets
             height="400"
           />
         }
-        {media[0].type.includes('video') &&
+        {media[0]?.mimeType.includes('video') &&
           <video autoplay loop muted >
-            <source src={media[0].url} type={media[0].type}>
+            <source src={media[0].url} type={media[0]?.mimeType}>
           </video>
         }
       </div>
@@ -133,7 +124,7 @@ if (mediaEntry) media = mediaEntry.data.assets
       { media?.length > 0 && 
         <div class="media">
           { media.map((asset: any) => {
-            if (asset.type.includes('image')) return (
+            if (asset.mimeType.includes('image')) return (
               <Image 
                 src={asset.url}
                 alt={`Image from report ${id}`}
@@ -141,7 +132,7 @@ if (mediaEntry) media = mediaEntry.data.assets
                 height="400"
               />
             )
-            if (asset.type.includes('video')) return (
+            if (asset.mimeType.includes('video')) return (
               <video controls >
                 <source src={asset.url} type={asset.type}>
               </video>

@@ -25,3 +25,42 @@ interface LocationLink {
     url: string;
     count?: number;
 }
+
+interface R2Asset {
+    key: string;
+    filename: string;
+    url: string;
+    mimeType: string;
+    size: number;
+    lastModified: Date;
+}
+
+interface SearchMetadata {
+    totalRecords: number;
+    totalChunks: number;
+    chunkSize: number;
+    chunks: ChunkInfo[];
+    lastUpdated: string;
+}
+
+interface ChunkInfo {
+    index: number;
+    count: number;
+    startDate: string;
+    endDate: string;
+    filename: string;
+}
+
+interface SearchResult extends ReportCard {
+    _score: number;
+    _matchCount: number;
+}
+
+interface SearchResponse {
+    results: SearchResult[];
+    loadedChunks: number;
+    totalChunks: number;
+    hasMore: boolean;
+    metadata?: SearchMetadata;
+    error?: string;
+}
