@@ -2,14 +2,13 @@ class SearchService {
   constructor() {
     this.metadata = null;
     this.loadedChunks = new Map(); // Cache loaded chunks
-    this.baseUrl = process.env.MEDIA_BASE_URL || `https://pub-${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.dev`;
   }
 
   async loadMetadata() {
     if (this.metadata) return this.metadata;
     
     try {
-      const response = await fetch(`${this.baseUrl}/search-data/metadata.json`);
+      const response = await fetch(`/api/search/metadata.json`);
       if (!response.ok) throw new Error(`Failed to load metadata: ${response.status}`);
       this.metadata = await response.json();
       return this.metadata;
@@ -26,7 +25,7 @@ class SearchService {
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}/search-data/search-chunk-${chunkIndex}.json`);
+      const response = await fetch(`/api/search/chunk/${chunkIndex}.json`);
       if (!response.ok) throw new Error(`Failed to load chunk ${chunkIndex}: ${response.status}`);
       
       const chunkData = await response.json();
@@ -48,7 +47,7 @@ class SearchService {
 
   searchInData(data, query, options = {}) {
     const {
-      limit = 50,
+      limit = null, // No default limit - show all results
       fields = ['searchText'],
       fuzzy = true
     } = options;
@@ -89,23 +88,20 @@ class SearchService {
           _matchCount: matchCount
         });
       }
-
-      // Stop if we have enough high-quality results
-      if (results.length >= limit * 2) break;
     }
 
-    // Sort by score and match count, then limit
-    return results
-      .sort((a, b) => {
-        if (b._score !== a._score) return b._score - a._score;
-        return b._matchCount - a._matchCount;
-      })
-      .slice(0, limit);
+    // Sort by score and match count, then apply limit if specified
+    const sortedResults = results.sort((a, b) => {
+      if (b._score !== a._score) return b._score - a._score;
+      return b._matchCount - a._matchCount;
+    });
+
+    return limit ? sortedResults.slice(0, limit) : sortedResults;
   }
 
   async search(query, options = {}) {
     const {
-      limit = 50,
+      limit = null, // No default limit - show all results
       loadAllChunks = false,
       chunkLimit = 3 // How many chunks to load initially
     } = options;
@@ -119,7 +115,15 @@ class SearchService {
         console.log('🔍 Loading all chunks for comprehensive search...');
         const allChunkIndices = Array.from({ length: metadata.totalChunks }, (_, i) => i);
         const allData = await this.loadMultipleChunks(allChunkIndices);
-        return this.searchInData(allData, query, { limit });
+        const results = this.searchInData(allData, query, { limit });
+        
+        return {
+          results,
+          loadedChunks: metadata.totalChunks,
+          totalChunks: metadata.totalChunks,
+          hasMore: false,
+          metadata
+        };
       } else {
         // Progressive loading: start with recent chunks
         console.log(`🔍 Searching with progressive loading (${chunkLimit} chunks)...`);
@@ -143,7 +147,7 @@ class SearchService {
   }
 
   async loadMoreResults(query, currentChunkCount, options = {}) {
-    const { chunkLimit = 3, limit = 50 } = options;
+    const { chunkLimit = 3, limit = null } = options;
     
     try {
       const metadata = await this.loadMetadata();
