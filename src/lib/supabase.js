@@ -14,6 +14,9 @@ allKeys.forEach(key => {
     console.log(`${key}: ${process.env[key]}`);
   }
 });
+
+console.log(process.env.CLOUDFLARE_BUCKET)
+
 // Remove import.meta.env - this won't work in Node.js
 console.log(`PLEASE WORKKKK: ${env.VITE_TEST_ENV || process.env.VITE_TEST_ENV || 'STILL UNDEFINED'}`);
 
