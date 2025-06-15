@@ -48,5 +48,7 @@ export default defineConfig({
   },
 
   integrations: [solidJs()],
-  adapter: cloudflare()
+  adapter: cloudflare({
+    imageService: 'cloudflare'
+  })
 });
